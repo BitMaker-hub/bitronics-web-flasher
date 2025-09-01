@@ -1,0 +1,30 @@
+{
+  "version": "v1.7.0",
+  "boards": [
+    "ESP32-2432S028R",
+    "ESP32-C3-devKitmv1", 
+    "ESP32-C3-super-mini",
+    "ESP32-D0WD-V3-weact",
+    "ESP32-S2-mini-wemos", 
+    "ESP32-S3-devKitv1",
+    "ESP32-S3-mini-weact",
+    "ESP32-S3-mini-wemos", 
+    "ESP32-devKitv1",
+    "ESP32_2432S028_2USB",
+    "Lilygo-T-Embed",
+    "M5-StampS3",
+    "M5Stick-C",
+    "NerdminerV2",
+    "NerdminerV2-S3-AMOLED",
+    "NerdminerV2-S3-AMOLED-TOUCH",
+    "NerdminerV2-S3-DONGLE", 
+    "NerdminerV2-S3-GEEK",
+    "NerdminerV2-T-Display_V1",
+    "NerdminerV2-T-HMI",
+    "NerdminerV2-T-QT",
+    "esp32cam",
+    "han_m5stack",
+    "wt32-sc01",
+    "wt32-sc01-plus"
+  ]
+}

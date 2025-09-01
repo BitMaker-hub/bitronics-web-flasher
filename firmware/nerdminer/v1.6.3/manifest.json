@@ -1,0 +1,12 @@
+{
+  "version": "v1.6.3", 
+  "boards": [
+    "ESP32-2432S028R",
+    "ESP32-devKitv1", 
+    "NerdminerV2-S3-AMOLED",
+    "NerdminerV2-S3-DONGLE",
+    "NerdminerV2-T-Display_V1",
+    "NerdminerV2-T-QT", 
+    "NerdminerV2"
+  ]
+}
