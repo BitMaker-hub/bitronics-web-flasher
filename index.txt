@@ -1,6 +1,6 @@
 1:HL["/bitronics-web-flasher/_next/static/media/e4af272ccee01ff0-s.p.woff2",{"as":"font","type":"font/woff2"}]
 2:HL["/bitronics-web-flasher/_next/static/css/8a743bbc2a4b8f8e.css",{"as":"style"}]
-0:["zbS521NPjK5O-Jq-AWN3b",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],"$L3",[[["$","link","0",{"rel":"stylesheet","href":"/bitronics-web-flasher/_next/static/css/8a743bbc2a4b8f8e.css","precedence":"next"}]],"$L4"]]]]
+0:["R4NN7ivTp2WBdfba90XqT",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],"$L3",[[["$","link","0",{"rel":"stylesheet","href":"/bitronics-web-flasher/_next/static/css/8a743bbc2a4b8f8e.css","precedence":"next"}]],"$L4"]]]]
 5:HL["/bitronics-web-flasher/_next/static/css/c9cb94e945cdc8d2.css",{"as":"style"}]
 6:I{"id":2313,"chunks":["641:static/chunks/641-5174f45ac27441ac.js","265:static/chunks/265-e4b8a53b82e4bdc5.js","185:static/chunks/app/layout-77a7d8940139ee45.js"],"name":"ClientThemeWrapper","async":false}
 7:I{"id":8886,"chunks":["641:static/chunks/641-5174f45ac27441ac.js","265:static/chunks/265-e4b8a53b82e4bdc5.js","185:static/chunks/app/layout-77a7d8940139ee45.js"],"name":"I18nProvider","async":false}
