@@ -1,0 +1,9 @@
+{
+  "version": "v1.0.31",
+  "boards": [
+    "NerdQAxe++",
+    "NerdQAxe+",
+    "NerdAxe",
+    "NerdAxeGamma"
+  ]
+}

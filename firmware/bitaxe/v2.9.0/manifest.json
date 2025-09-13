@@ -1,0 +1,7 @@
+{
+  "version": "v2.9.0",
+  "boards": [
+    "Supra401",
+    "Gamma601"
+  ]
+}
