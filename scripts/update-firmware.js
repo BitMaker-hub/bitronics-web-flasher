@@ -333,11 +333,6 @@ class FirmwareUpdater {
       await this.processRepo(repoKey, config);
     }
 
-    // Set output for GitHub Actions
-    if (process.env.GITHUB_ACTIONS) {
-      console.log(`::set-output name=changes::${this.hasChanges}`);
-    }
-
     console.log(`\n✨ Update check completed. Changes: ${this.hasChanges ? 'Yes' : 'No'}`);
   }
 }
