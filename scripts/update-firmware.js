@@ -56,6 +56,19 @@ const FIRMWARE_REPOS = {
         fileName: 'Gamma601'
       }
     ]
+  },
+  nerdoctaxe: {
+    owner: 'shufps',
+    repo: 'ESP-Miner-NerdQAxePlus',
+    firmwarePath: 'public/firmware/nerdoctaxe',
+    devices: [
+      {
+        name: 'NerdOctaxeGamma',
+        factoryPattern: 'esp-miner-factory-NerdOCTAXE-Gamma',
+        firmwarePattern: 'esp-miner-NerdOCTAXE-Gamma',
+        fileName: 'NerdOctaxeGamma'
+      }
+    ]
   }
   // Add more repos here as needed
   // nerdminer: {
@@ -112,8 +125,22 @@ class FirmwareUpdater {
       const versionsDir = await fs.readdir(firmwarePath);
       const versionDirs = versionsDir
         .filter(dir => dir.startsWith('v') && dir.match(/^v\d+\.\d+\.\d+/))
-        .sort((a, b) => semver.rcompare(a, b));
-      
+        .filter(dir => {
+          // Filter out -rc and -beta versions from being considered current
+          return !dir.includes('-rc') && !dir.includes('-beta') && !dir.includes('-test');
+        })
+        .sort((a, b) => {
+          try {
+            // Clean version strings for semver (remove 'v' prefix)
+            const cleanA = a.replace('v', '');
+            const cleanB = b.replace('v', '');
+            return semver.rcompare(cleanA, cleanB);
+          } catch {
+            // If semver fails, fallback to string comparison
+            return b.localeCompare(a);
+          }
+        });
+
       return versionDirs[0] || null;
     } catch (error) {
       console.log(`📁 No existing versions found in ${firmwarePath}`);
@@ -142,16 +169,18 @@ class FirmwareUpdater {
         const data = await fs.readFile(mainManifestPath, 'utf8');
         mainManifest = JSON.parse(data);
       } catch (error) {
-        // Create new manifest based on repository
+        // Create new manifest based on repository and firmware path
         const repoName = `${repoConfig.owner}/${repoConfig.repo}`;
         let seriesName = "Unknown Series";
-        
-        if (repoName === "shufps/ESP-Miner-NerdQAxePlus") {
+
+        if (firmwarePath.includes('nerdoctaxe')) {
+          seriesName = "NerdOctaxe Series";
+        } else if (repoName === "shufps/ESP-Miner-NerdQAxePlus") {
           seriesName = "NerdQAxe Series";
         } else if (repoName === "bitaxeorg/ESP-Miner") {
           seriesName = "Bitaxe Series";
         }
-        
+
         mainManifest = {
           name: seriesName,
           repository: repoName,
@@ -252,13 +281,29 @@ class FirmwareUpdater {
 
     // Check if we need to update
     try {
-      if (currentVersion && semver.gte(currentVersion.replace('v', ''), newVersion.replace('v', ''))) {
-        console.log(`✅ Already up to date for repository`);
-        return;
+      if (currentVersion) {
+        const cleanCurrent = currentVersion.replace('v', '');
+        const cleanNew = newVersion.replace('v', '');
+
+        // Use semver.coerce to handle versions with 4 parts (e.g., 1.0.34.1)
+        const coercedCurrent = semver.coerce(cleanCurrent);
+        const coercedNew = semver.coerce(cleanNew);
+
+        if (coercedCurrent && coercedNew && semver.gte(coercedCurrent, coercedNew)) {
+          console.log(`✅ Already up to date for repository (${currentVersion} >= ${newVersion})`);
+          return;
+        }
+
+        // If versions are equal after coercion but original strings differ, check exact match
+        if (currentVersion === newVersion) {
+          console.log(`✅ Already at exact version ${newVersion}`);
+          return;
+        }
       }
     } catch (error) {
       // If semver comparison fails, proceed with download (version format might be different)
       console.log(`⚠️  Version format comparison failed, proceeding with download...`);
+      console.log(`   Error: ${error.message}`);
     }
 
     // Create version directory

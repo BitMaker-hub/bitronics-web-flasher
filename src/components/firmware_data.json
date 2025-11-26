@@ -24,6 +24,11 @@
       "name": "NerdNos",
       "picture": "pictures/nerdnos.png",
       "boards": []
+    },
+    {
+      "name": "NerdOctaxe",
+      "picture": "pictures/nerdoctaxe.png",
+      "boards": []
     }
   ]
 }

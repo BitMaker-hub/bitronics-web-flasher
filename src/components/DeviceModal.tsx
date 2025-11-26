@@ -35,17 +35,17 @@ export default function DeviceModal({ isOpen, onClose, selectDevice }: DeviceMod
         <X className="h-6 w-6" />
       </button>
       <h2 className="text-xl font-bold mb-4 text-white">{t('devicesModal.title')}</h2>
-      <div className="flex flex-wrap gap-8 justify-center p-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 justify-items-center p-6">
         {devices.map((d) => (
           <div
             key={d.name}
-            className="max-w-1/3 md:max-w-1/4"
+            className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => {
               selectDevice(d.name);
             }}
           >
-            <img className="mb-2 w-30 h-30 mx-auto object-contain" src={d.picture} alt={d.name} />
-            <div className="mb-4 w-full text-center text-white">{d.name}</div>
+            <img className="mb-2 w-24 h-24 object-contain" src={d.picture} alt={d.name} />
+            <div className="text-sm text-center text-white">{d.name}</div>
           </div>
         ))}
       </div>
