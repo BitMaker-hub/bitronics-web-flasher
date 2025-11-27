@@ -135,28 +135,16 @@ export default function LandingHero() {
           
           if (manifest.boards && Array.isArray(manifest.boards)) {
             for (const boardName of manifest.boards) {
-              // Check if this is a lowmem version
-              const isLowMem = version.includes('-lowmem');
-
-              let displayName;
-              if (isLowMem) {
-                // For lowmem versions, add "Low Memory" suffix
-                displayName = boardName === 'Supra401' ? 'Supra 401 (Low Memory)' :
-                             boardName === 'Gamma601' ? 'Gamma 601 (Low Memory)' :
-                             `${boardName} (Low Memory)`;
-              } else {
-                // Normal versions
-                displayName = boardName === 'Supra401' ? 'Supra 401' :
-                             boardName === 'Gamma601' ? 'Gamma 601' : boardName;
-              }
-
+              const displayName = boardName === 'Supra401' ? 'Supra 401' :
+                                 boardName === 'Gamma601' ? 'Gamma 601' : boardName;
+              
               if (!allBoards.has(displayName)) {
                 allBoards.set(displayName, {
                   name: displayName,
                   supported_firmware: []
                 });
               }
-
+              
               allBoards.get(displayName).supported_firmware.push({
                 version: version,
                 path: `${basePath}/firmware/bitaxe/${version}/${boardName}_factory.bin`
