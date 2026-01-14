@@ -14,12 +14,30 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+    # Skip if push was made by GitHub Action (to avoid race condition)
+    # Only run on workflow_run trigger OR manual pushes
+    if: |
+      github.event_name == 'workflow_run' ||
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'push' && github.actor != 'github-actions[bot]')
+
     steps:
+    - name: Wait for commit propagation (workflow_run only)
+      if: github.event_name == 'workflow_run'
+      run: sleep 10
+      
     - name: Checkout
       uses: actions/checkout@v4
       with:
         ref: main
+        fetch-depth: 0
+    
+    - name: Ensure latest commit
+      run: |
+        git fetch origin main
+        git reset --hard origin/main
+        echo "Current commit: $(git rev-parse HEAD)"
+        echo "Latest main commit: $(git rev-parse origin/main)"
       
     - name: Setup Node.js
       uses: actions/setup-node@v4
