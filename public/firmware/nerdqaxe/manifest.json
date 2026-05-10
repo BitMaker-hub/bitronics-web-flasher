@@ -2,6 +2,7 @@
   "name": "NerdQAxe Series",
   "repository": "shufps/ESP-Miner-NerdQAxePlus",
   "versions": [
+    "v1.0.37",
     "v1.0.36",
     "v1.0.35",
     "v1.0.34.1",
@@ -15,5 +16,5 @@
     "NerdAxe",
     "NerdAxeGamma"
   ],
-  "lastUpdated": "2026-01-25T03:48:38.769Z"
+  "lastUpdated": "2026-05-10T05:32:51.808Z"
 }
