@@ -1,9 +1,9 @@
 1:HL["/_next/static/media/e4af272ccee01ff0-s.p.woff2",{"as":"font","type":"font/woff2"}]
 2:HL["/_next/static/css/2d42ca5e320a1cda.css",{"as":"style"}]
-0:["-O0TmgYJ_d8TJSH_ktQPP",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],"$L3",[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/2d42ca5e320a1cda.css","precedence":"next"}]],"$L4"]]]]
+0:["boQinb2BBOQO286WC_-5u",[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],"$L3",[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/2d42ca5e320a1cda.css","precedence":"next"}]],"$L4"]]]]
 5:HL["/_next/static/css/c9cb94e945cdc8d2.css",{"as":"style"}]
-6:I{"id":2313,"chunks":["641:static/chunks/641-5174f45ac27441ac.js","265:static/chunks/265-826d52ad0da06d8d.js","185:static/chunks/app/layout-533977cbf091716b.js"],"name":"ClientThemeWrapper","async":false}
-7:I{"id":8886,"chunks":["641:static/chunks/641-5174f45ac27441ac.js","265:static/chunks/265-826d52ad0da06d8d.js","185:static/chunks/app/layout-533977cbf091716b.js"],"name":"I18nProvider","async":false}
+6:I{"id":2313,"chunks":["641:static/chunks/641-5174f45ac27441ac.js","265:static/chunks/265-826d52ad0da06d8d.js","185:static/chunks/app/layout-26c813ca63ce48ad.js"],"name":"ClientThemeWrapper","async":false}
+7:I{"id":8886,"chunks":["641:static/chunks/641-5174f45ac27441ac.js","265:static/chunks/265-826d52ad0da06d8d.js","185:static/chunks/app/layout-26c813ca63ce48ad.js"],"name":"I18nProvider","async":false}
 8:I{"id":7767,"chunks":["272:static/chunks/webpack-2aefa235001e2ca1.js","971:static/chunks/fd9d1056-553001ca727fce8f.js","596:static/chunks/596-4d1172bc630efa98.js"],"name":"default","async":false}
 9:I{"id":7920,"chunks":["272:static/chunks/webpack-2aefa235001e2ca1.js","971:static/chunks/fd9d1056-553001ca727fce8f.js","596:static/chunks/596-4d1172bc630efa98.js"],"name":"default","async":false}
 a:I{"id":4839,"chunks":["272:static/chunks/webpack-2aefa235001e2ca1.js","971:static/chunks/fd9d1056-553001ca727fce8f.js","596:static/chunks/596-4d1172bc630efa98.js"],"name":"default","async":false}
