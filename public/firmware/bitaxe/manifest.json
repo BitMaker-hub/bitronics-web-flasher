@@ -2,6 +2,7 @@
   "name": "Bitaxe Series",
   "repository": "bitaxeorg/ESP-Miner",
   "versions": [
+    "v2.15.1",
     "v2.15.0",
     "v2.14.2",
     "v2.14.1",
@@ -10,12 +11,11 @@
     "v2.13.0",
     "v2.12.2",
     "v2.12.0",
-    "v2.11.0",
-    "v2.11.0-lowmem"
+    "v2.11.0"
   ],
   "devices": [
     "Supra401",
     "Gamma601"
   ],
-  "lastUpdated": "2026-08-22T02:48:33.345Z"
+  "lastUpdated": "2026-08-30T07:43:53.215Z"
 }
