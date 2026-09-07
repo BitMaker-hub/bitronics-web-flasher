@@ -27,7 +27,6 @@ type Board = { name: string; file: string; supported_firmware: Firmware[] };
 type DeviceSource = {
   device: string; // name in firmware_data.json
   slug: string; // folder under public/firmware
-  fallbackVersions: string[]; // only used when the main manifest is unreachable
   keepsConfiguration?: boolean; // ships a firmware-only image to flash at 0x10000
   includes?: (board: string) => boolean; // one folder can serve more than one device
   label?: Record<string, string>; // how the board is spelled in the selector
@@ -41,7 +40,6 @@ const DEVICE_SOURCES: DeviceSource[] = [
     device: 'NerdMiner',
     keepsConfiguration: true,
     slug: 'nerdminer',
-    fallbackVersions: ['v1.8.3', 'v1.7.0', 'v1.6.3'],
     label: { NerdminerV2: NERDMINER_ORIGINAL },
     // The original board goes first, the rest alphabetically.
     sort: (a, b) =>
@@ -51,7 +49,6 @@ const DEVICE_SOURCES: DeviceSource[] = [
     device: 'Nerdaxe',
     keepsConfiguration: true,
     slug: 'nerdqaxe', // shares its folder with the NerdQAxe, same repository
-    fallbackVersions: ['v1.0.31', 'v1.0.29'],
     includes: (board) => board.startsWith('NerdAxe'),
     label: { NerdAxe: 'Ultra', NerdAxeGamma: 'Gamma' },
   },
@@ -59,7 +56,6 @@ const DEVICE_SOURCES: DeviceSource[] = [
     device: 'NerdQaxe',
     keepsConfiguration: true,
     slug: 'nerdqaxe',
-    fallbackVersions: ['v1.0.31', 'v1.0.29'],
     includes: (board) => board.startsWith('NerdQAxe'),
     label: { 'NerdQAxe++': '++ (4.8THs)', 'NerdQAxe+': '+ (2.4THs)' },
   },
@@ -67,24 +63,21 @@ const DEVICE_SOURCES: DeviceSource[] = [
     device: 'Bitaxe',
     keepsConfiguration: true,
     slug: 'bitaxe',
-    fallbackVersions: ['v2.10.0'],
     label: { Supra401: 'Supra 401', Gamma601: 'Gamma 601' },
   },
   {
     device: 'NerdNos',
     slug: 'nerdnos',
-    fallbackVersions: ['v1.0.4'],
   },
   {
     device: 'Seeder',
     slug: 'seeder',
-    fallbackVersions: ['v2.1.0'],
     label: { TDisplay: 'TTGO T-Display', TDisplayS3: 'LilyGO T-Display-S3' },
   },
   {
     device: 'NerdOctaxe',
+    keepsConfiguration: true,
     slug: 'nerdoctaxe',
-    fallbackVersions: ['v1.0.34.1', 'v1.0.32.1', 'v1.0.32'],
     label: { NerdOctaxeGamma: 'Gamma' },
   },
 ];
@@ -129,17 +122,20 @@ export default function LandingHero() {
   // One loader for every device: read the main manifest for the versions, then
   // each version's manifest for the boards it was built for.
   const loadBoards = async (source: DeviceSource): Promise<Board[]> => {
-    let versions = source.fallbackVersions;
+    // The main manifest is the only source of versions. It comes from this same
+    // site, so if it cannot be read then neither can the per-version manifests
+    // and there is nothing sensible to fall back to.
+    let versions: string[] = [];
 
     try {
       const response = await fetch(`${basePath}/firmware/${source.slug}/manifest.json`);
       if (response.ok) {
-        versions = (await response.json()).versions || versions;
+        versions = (await response.json()).versions || [];
       } else {
-        console.warn(`No main manifest for ${source.slug}, falling back to a fixed list`);
+        console.warn(`No manifest for ${source.slug}: it will have no versions to offer`);
       }
     } catch (error) {
-      console.warn(`Could not read the main ${source.slug} manifest, falling back to a fixed list`);
+      console.warn(`Could not read the ${source.slug} manifest:`, error);
     }
 
     const boards = new Map<string, Board>();
