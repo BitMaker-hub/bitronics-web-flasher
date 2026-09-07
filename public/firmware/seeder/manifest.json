@@ -1,0 +1,12 @@
+{
+  "name": "Seeder Series",
+  "repository": "BitMaker-hub/Seeder",
+  "versions": [
+    "v2.1.0"
+  ],
+  "devices": [
+    "TDisplay",
+    "TDisplayS3"
+  ],
+  "lastUpdated": "2026-09-07T23:19:28.495Z"
+}

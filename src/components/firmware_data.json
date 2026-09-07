@@ -29,6 +29,11 @@
       "name": "NerdOctaxe",
       "picture": "pictures/nerdoctaxe.png",
       "boards": []
+    },
+    {
+      "name": "Seeder",
+      "picture": "pictures/seeder.png",
+      "boards": []
     }
   ]
 }

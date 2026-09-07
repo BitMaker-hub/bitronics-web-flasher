@@ -3,6 +3,7 @@
 const axios = require('axios');
 const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
 // Upstream ships versions with four parts (v1.0.34.1) and semver cannot parse
 // them. Coercing them down to three made every x.y.z.N release look identical
 // to x.y.z, so the updater decided it was already up to date and skipped it.
@@ -95,6 +96,23 @@ const FIRMWARE_REPOS = {
       }
     ]
   },
+  seeder: {
+    owner: 'BitMaker-hub',
+    repo: 'Seeder',
+    firmwarePath: 'public/firmware/seeder',
+    devices: [
+      {
+        name: 'TDisplay',
+        factoryPattern: 'seeder-tdisplay-merged.bin',
+        fileName: 'TDisplay'
+      },
+      {
+        name: 'TDisplayS3',
+        factoryPattern: 'seeder-tdisplay-s3-merged.bin',
+        fileName: 'TDisplayS3'
+      }
+    ]
+  },
   nerdminer: {
     owner: 'BitMaker-hub',
     repo: 'NerdMiner_v2',
@@ -167,11 +185,22 @@ class FirmwareUpdater {
 
   async createManifest(versionPath, version, boards = ['NerdQAxe']) {
     const manifestPath = path.join(versionPath, 'manifest.json');
-    const manifest = {
-      version: version,
-      boards: boards
-    };
-    
+
+    // Record what each factory image hashes to. It costs nothing here and it
+    // lets anyone check that the file this site serves is the one the upstream
+    // CI published, which matters most for a device that generates seeds.
+    const sha256 = {};
+    for (const board of boards) {
+      try {
+        const image = await fs.readFile(path.join(versionPath, `${board}_factory.bin`));
+        sha256[board] = crypto.createHash('sha256').update(image).digest('hex');
+      } catch (error) {
+        console.log(`⚠️  Could not hash the factory image for ${board}`);
+      }
+    }
+
+    const manifest = { version: version, boards: boards, sha256: sha256 };
+
     await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
     console.log(`📝 Created manifest at ${manifestPath}`);
   }
@@ -190,7 +219,9 @@ class FirmwareUpdater {
         const repoName = `${repoConfig.owner}/${repoConfig.repo}`;
         let seriesName = "Unknown Series";
 
-        if (firmwarePath.includes('nerdminer')) {
+        if (firmwarePath.includes('seeder')) {
+          seriesName = 'Seeder Series';
+        } else if (firmwarePath.includes('nerdminer')) {
           seriesName = 'Nerdminer Series';
         } else if (firmwarePath.includes('nerdoctaxe')) {
           seriesName = "NerdOctaxe Series";
@@ -364,11 +395,13 @@ class FirmwareUpdater {
         asset.name.includes(device.factoryPattern)
       );
       
-      // Find firmware asset  
-      const firmwareAsset = release.assets.find(asset => 
-        asset.name.includes(device.firmwarePattern) && 
-        !asset.name.includes('factory')
-      );
+      // Find the firmware-only asset, for devices that publish one
+      const firmwareAsset = device.firmwarePattern
+        ? release.assets.find(
+            (asset) =>
+              asset.name.includes(device.firmwarePattern) && !asset.name.includes('factory')
+          )
+        : null;
 
       if (!factoryAsset) {
         console.log(`⚠️  No factory asset found for ${device.name} with pattern: ${device.factoryPattern}`);
@@ -377,7 +410,7 @@ class FirmwareUpdater {
 
       // A board with no firmware-only build still deserves its factory image;
       // dropping it here is what used to make a board vanish from a version.
-      if (!firmwareAsset) {
+      if (!firmwareAsset && device.firmwarePattern) {
         console.log(`⚠️  No firmware-only asset for ${device.name}, shipping just the factory image`);
       }
 

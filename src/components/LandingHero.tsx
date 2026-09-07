@@ -71,6 +71,12 @@ const DEVICE_SOURCES: DeviceSource[] = [
     fallbackVersions: ['v1.0.4'],
   },
   {
+    device: 'Seeder',
+    slug: 'seeder',
+    fallbackVersions: ['v2.1.0'],
+    label: { TDisplay: 'TTGO T-Display', TDisplayS3: 'LilyGO T-Display-S3' },
+  },
+  {
     device: 'NerdOctaxe',
     slug: 'nerdoctaxe',
     fallbackVersions: ['v1.0.34.1', 'v1.0.32.1', 'v1.0.32'],
