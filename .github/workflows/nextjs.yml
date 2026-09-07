@@ -9,6 +9,16 @@ on:
   push:
     branches: ["main"]
 
+  # The firmware bot pushes to main with the repository's GITHUB_TOKEN, and
+  # GitHub deliberately does not start workflow runs for those pushes. Without
+  # this trigger every automated firmware update landed on main and was never
+  # published: the live flasher sat on January's firmware for eight months
+  # while the update job reported success every single day.
+  workflow_run:
+    workflows: ["Update Firmware Releases"]
+    types: [completed]
+    branches: [main]
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -31,6 +41,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # workflow_run starts from the default branch as it was when the run
+          # was queued, which is not necessarily the firmware commit to ship.
+          ref: main
       - name: Detect package manager
         id: detect-package-manager
         run: |
