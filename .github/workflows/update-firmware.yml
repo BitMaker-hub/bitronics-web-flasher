@@ -25,7 +25,6 @@ jobs:
     - name: Install dependencies
       run: |
         npm install axios
-        npm install semver
 
     - name: Check for new firmware releases
       id: check-releases

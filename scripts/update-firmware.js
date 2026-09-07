@@ -3,7 +3,32 @@
 const axios = require('axios');
 const fs = require('fs').promises;
 const path = require('path');
-const semver = require('semver');
+// Upstream ships versions with four parts (v1.0.34.1) and semver cannot parse
+// them. Coercing them down to three made every x.y.z.N release look identical
+// to x.y.z, so the updater decided it was already up to date and skipped it.
+// Compare the numeric parts one by one instead, however many there are.
+// GitHub Pages refuses to publish a site larger than 1 GB and every release of
+// every device adds tens of megabytes. The manifest used to be trimmed to ten
+// versions while the folders were kept forever, so the published site grew to
+// 1.4 GB and deployments quietly stopped landing. Keeping the last few versions
+// of each device holds the site at a stable size.
+const VERSIONS_KEPT = 4;
+
+// The NerdMiner ships 32 boards in every release, so a single version of it
+// weighs as much as three of anything else. It keeps one fewer.
+const VERSIONS_KEPT_BY_DEVICE = { nerdminer: 3 };
+
+function compareVersions(a, b) {
+  const parts = (v) => String(v).replace(/^v/, '').split('-')[0].split('.');
+  const [left, right] = [parts(a), parts(b)];
+
+  for (let i = 0; i < Math.max(left.length, right.length); i++) {
+    const one = Number(left[i]) || 0;
+    const other = Number(right[i]) || 0;
+    if (one !== other) return one < other ? -1 : 1;
+  }
+  return 0;
+}
 
 // Configuration for firmware repositories
 const FIRMWARE_REPOS = {
@@ -69,15 +94,17 @@ const FIRMWARE_REPOS = {
         fileName: 'NerdOctaxeGamma'
       }
     ]
+  },
+  nerdminer: {
+    owner: 'BitMaker-hub',
+    repo: 'NerdMiner_v2',
+    firmwarePath: 'public/firmware/nerdminer',
+    // Their tags read nerdminer-release-V1.8.3; the flasher stores v1.8.3.
+    version: (tag) => 'v' + tag.replace(/^nerdminer-release-v?/i, ''),
+    // Thirty-two boards and counting: take whatever the release ships instead
+    // of listing them one by one and going stale the moment a board is added.
+    devicesFromAssets: true
   }
-  // Add more repos here as needed
-  // nerdminer: {
-  //   owner: 'BitMaker-hub',
-  //   repo: 'NerdMiner_v2',
-  //   assetPattern: 'NerdminerV2_factory.bin',
-  //   firmwarePath: 'public/firmware/nerdminer',
-  //   deviceName: 'Nerdminer'
-  // }
 };
 
 class FirmwareUpdater {
@@ -129,17 +156,7 @@ class FirmwareUpdater {
           // Filter out -rc and -beta versions from being considered current
           return !dir.includes('-rc') && !dir.includes('-beta') && !dir.includes('-test');
         })
-        .sort((a, b) => {
-          try {
-            // Clean version strings for semver (remove 'v' prefix)
-            const cleanA = a.replace('v', '');
-            const cleanB = b.replace('v', '');
-            return semver.rcompare(cleanA, cleanB);
-          } catch {
-            // If semver fails, fallback to string comparison
-            return b.localeCompare(a);
-          }
-        });
+        .sort((a, b) => compareVersions(b, a)); // newest first
 
       return versionDirs[0] || null;
     } catch (error) {
@@ -173,7 +190,9 @@ class FirmwareUpdater {
         const repoName = `${repoConfig.owner}/${repoConfig.repo}`;
         let seriesName = "Unknown Series";
 
-        if (firmwarePath.includes('nerdoctaxe')) {
+        if (firmwarePath.includes('nerdminer')) {
+          seriesName = 'Nerdminer Series';
+        } else if (firmwarePath.includes('nerdoctaxe')) {
           seriesName = "NerdOctaxe Series";
         } else if (repoName === "shufps/ESP-Miner-NerdQAxePlus") {
           seriesName = "NerdQAxe Series";
@@ -193,7 +212,7 @@ class FirmwareUpdater {
       // Add new version if it doesn't exist
       if (!mainManifest.versions.includes(newVersion)) {
         mainManifest.versions.unshift(newVersion); // Add at beginning (newest first)
-        mainManifest.versions = mainManifest.versions.slice(0, 10); // Keep only last 10 versions
+        mainManifest.versions = mainManifest.versions.slice(0, VERSIONS_KEPT);
       }
       
       // Update devices list (merge and deduplicate)
@@ -267,43 +286,69 @@ class FirmwareUpdater {
     }
   }
 
+  // Delete every version folder the manifest no longer advertises. This also
+  // sweeps up folders left behind by hand, which is where most of the weight was.
+  async pruneOldVersions(firmwarePath) {
+    const manifestPath = path.join(firmwarePath, 'manifest.json');
+    let manifest;
+
+    try {
+      manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+    } catch (error) {
+      return; // a folder without a manifest is maintained by hand
+    }
+
+    const limit = VERSIONS_KEPT_BY_DEVICE[path.basename(firmwarePath)] || VERSIONS_KEPT;
+    const kept = (manifest.versions || []).slice(0, limit);
+    if (kept.length === 0) return; // never empty a folder on a broken manifest
+
+    if (kept.length !== (manifest.versions || []).length) {
+      manifest.versions = kept;
+      await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+      console.log(`✂️  Trimmed ${firmwarePath} manifest to ${kept.length} versions`);
+      this.hasChanges = true;
+    }
+
+    for (const entry of await fs.readdir(firmwarePath, { withFileTypes: true })) {
+      if (!entry.isDirectory() || kept.includes(entry.name)) continue;
+
+      await fs.rm(path.join(firmwarePath, entry.name), { recursive: true, force: true });
+      console.log(`🧹 Removed ${entry.name} from ${firmwarePath}`);
+      this.hasChanges = true;
+    }
+  }
+
   async processRepo(repoKey, config) {
     console.log(`\n🚀 Processing repository ${config.owner}/${config.repo}...`);
     
     const release = await this.getLatestRelease(config.owner, config.repo);
     if (!release) return;
 
-    const newVersion = release.tag_name;
+    const newVersion = config.version ? config.version(release.tag_name) : release.tag_name;
+
+    // A release that publishes <board>_factory.bin already names its own boards.
+    const devices = config.devicesFromAssets
+      ? release.assets
+          .filter((asset) => asset.name.endsWith('_factory.bin'))
+          .map((asset) => {
+            const name = asset.name.replace(/_factory.bin$/, '');
+            return {
+              name,
+              factoryPattern: `${name}_factory.bin`,
+              firmwarePattern: `${name}_firmware.bin`,
+              fileName: name
+            };
+          })
+      : config.devices;
     const currentVersion = await this.getCurrentVersion(config.firmwarePath);
     
     console.log(`📊 Current version: ${currentVersion || 'none'}`);
     console.log(`📊 Latest version: ${newVersion}`);
 
     // Check if we need to update
-    try {
-      if (currentVersion) {
-        const cleanCurrent = currentVersion.replace('v', '');
-        const cleanNew = newVersion.replace('v', '');
-
-        // Use semver.coerce to handle versions with 4 parts (e.g., 1.0.34.1)
-        const coercedCurrent = semver.coerce(cleanCurrent);
-        const coercedNew = semver.coerce(cleanNew);
-
-        if (coercedCurrent && coercedNew && semver.gte(coercedCurrent, coercedNew)) {
-          console.log(`✅ Already up to date for repository (${currentVersion} >= ${newVersion})`);
-          return;
-        }
-
-        // If versions are equal after coercion but original strings differ, check exact match
-        if (currentVersion === newVersion) {
-          console.log(`✅ Already at exact version ${newVersion}`);
-          return;
-        }
-      }
-    } catch (error) {
-      // If semver comparison fails, proceed with download (version format might be different)
-      console.log(`⚠️  Version format comparison failed, proceeding with download...`);
-      console.log(`   Error: ${error.message}`);
+    if (currentVersion && compareVersions(currentVersion, newVersion) >= 0) {
+      console.log(`✅ Already up to date for repository (${currentVersion} >= ${newVersion})`);
+      return;
     }
 
     // Create version directory
@@ -311,7 +356,7 @@ class FirmwareUpdater {
     let downloadedDevices = [];
 
     // Process each device in the configuration
-    for (const device of config.devices) {
+    for (const device of devices) {
       console.log(`\n📦 Processing device: ${device.name}`);
       
       // Find factory asset
@@ -330,9 +375,10 @@ class FirmwareUpdater {
         continue;
       }
 
+      // A board with no firmware-only build still deserves its factory image;
+      // dropping it here is what used to make a board vanish from a version.
       if (!firmwareAsset) {
-        console.log(`⚠️  No firmware asset found for ${device.name} with pattern: ${device.firmwarePattern}`);
-        continue;
+        console.log(`⚠️  No firmware-only asset for ${device.name}, shipping just the factory image`);
       }
 
       // Download factory
@@ -344,13 +390,15 @@ class FirmwareUpdater {
         continue;
       }
 
-      // Download firmware
-      const firmwarePath = path.join(versionDir, `${device.fileName}_firmware.bin`);
-      const firmwareSuccess = await this.downloadAsset(firmwareAsset.browser_download_url, firmwarePath);
-      
-      if (!firmwareSuccess) {
-        console.log(`❌ Failed to download firmware for ${device.name}`);
-        continue;
+      // Download the firmware-only build when the release has one
+      if (firmwareAsset) {
+        const firmwarePath = path.join(versionDir, `${device.fileName}_firmware.bin`);
+        const firmwareSuccess = await this.downloadAsset(firmwareAsset.browser_download_url, firmwarePath);
+
+        if (!firmwareSuccess) {
+          console.log(`❌ Failed to download firmware for ${device.name}`);
+          continue;
+        }
       }
 
       downloadedDevices.push(device.name);
@@ -376,6 +424,15 @@ class FirmwareUpdater {
     
     for (const [repoKey, config] of Object.entries(FIRMWARE_REPOS)) {
       await this.processRepo(repoKey, config);
+    }
+
+    // Prune every device, including the ones nobody automates, so a folder
+    // filled in by hand cannot push the site back over the limit.
+    console.log(`
+🧹 Keeping the last ${VERSIONS_KEPT} versions of each device...`);
+    const root = 'public/firmware';
+    for (const entry of await fs.readdir(root, { withFileTypes: true })) {
+      if (entry.isDirectory()) await this.pruneOldVersions(path.join(root, entry.name));
     }
 
     console.log(`\n✨ Update check completed. Changes: ${this.hasChanges ? 'Yes' : 'No'}`);
