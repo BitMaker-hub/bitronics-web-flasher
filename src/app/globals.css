@@ -29,7 +29,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-bitronics: hsl(41 100% 50%);
+  /* Brand gold. The single accent: everything else stays white or muted. */
+  --color-bitronics: #ECD400;
+  /* Reserved for numeric values, so it never fights with the gold. */
+  --color-bitcoin: #F7931A;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -374,4 +377,15 @@ body {
 .flex.flex-col.justify-between.items-center {
   min-height: fit-content;
   align-items: stretch;
+}
+
+/* Headlines in Space Grotesk, data in M PLUS 1 Code. */
+.font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.font-data {
+  font-family: var(--font-data), ui-monospace, SFMono-Regular, monospace;
+  font-feature-settings: 'tnum';
 }

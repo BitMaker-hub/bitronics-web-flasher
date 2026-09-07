@@ -1,7 +1,7 @@
 {
   "devices": [
     {
-      "name": "Nerdminer",
+      "name": "NerdMiner",
       "picture": "pictures/nerdminer.png",
       "boards": []
     },

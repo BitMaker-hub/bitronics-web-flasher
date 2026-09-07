@@ -28,16 +28,18 @@ type DeviceSource = {
   device: string; // name in firmware_data.json
   slug: string; // folder under public/firmware
   fallbackVersions: string[]; // only used when the main manifest is unreachable
+  keepsConfiguration?: boolean; // ships a firmware-only image to flash at 0x10000
   includes?: (board: string) => boolean; // one folder can serve more than one device
   label?: Record<string, string>; // how the board is spelled in the selector
   sort?: (a: Board, b: Board) => number;
 };
 
-const NERDMINER_ORIGINAL = 'NERDMINERV2 ORIGINAL BOARD (TDISPLAY-S3)';
+const NERDMINER_ORIGINAL = 'NerdMinerV2 original board (T-Display-S3)';
 
 const DEVICE_SOURCES: DeviceSource[] = [
   {
-    device: 'Nerdminer',
+    device: 'NerdMiner',
+    keepsConfiguration: true,
     slug: 'nerdminer',
     fallbackVersions: ['v1.8.3', 'v1.7.0', 'v1.6.3'],
     label: { NerdminerV2: NERDMINER_ORIGINAL },
@@ -47,6 +49,7 @@ const DEVICE_SOURCES: DeviceSource[] = [
   },
   {
     device: 'Nerdaxe',
+    keepsConfiguration: true,
     slug: 'nerdqaxe', // shares its folder with the NerdQAxe, same repository
     fallbackVersions: ['v1.0.31', 'v1.0.29'],
     includes: (board) => board.startsWith('NerdAxe'),
@@ -54,6 +57,7 @@ const DEVICE_SOURCES: DeviceSource[] = [
   },
   {
     device: 'NerdQaxe',
+    keepsConfiguration: true,
     slug: 'nerdqaxe',
     fallbackVersions: ['v1.0.31', 'v1.0.29'],
     includes: (board) => board.startsWith('NerdQAxe'),
@@ -61,6 +65,7 @@ const DEVICE_SOURCES: DeviceSource[] = [
   },
   {
     device: 'Bitaxe',
+    keepsConfiguration: true,
     slug: 'bitaxe',
     fallbackVersions: ['v2.10.0'],
     label: { Supra401: 'Supra 401', Gamma601: 'Gamma 601' },
@@ -83,6 +88,19 @@ const DEVICE_SOURCES: DeviceSource[] = [
     label: { NerdOctaxeGamma: 'Gamma' },
   },
 ];
+
+// The Bitronics signature: a white headline with exactly one word in gold.
+function Headline({ text }: { text: string }) {
+  const words = text.trim().split(' ');
+  const accent = words.pop();
+
+  return (
+    <>
+      {words.join(' ')} <span className="text-bitronics">{accent}</span>
+    </>
+  );
+}
+
 export default function LandingHero() {
   const { t } = useTranslation();
   const [selectedDevice, setSelectedDevice] = useState<string>('');
@@ -225,7 +243,7 @@ export default function LandingHero() {
   const board =
     selectedBoardVersion !== ''
       ? device.boards.find((b) => b.name == selectedBoardVersion)!
-      : { supported_firmware: [] };
+      : { name: '', file: '', supported_firmware: [] };
   const firmware =
     selectedFirmware !== ''
       ? board.supported_firmware.find((f: any) => f.version == selectedFirmware)!
@@ -729,7 +747,7 @@ export default function LandingHero() {
     }
 
     // Validate custom AP name if enabled
-    if (selectedDevice === 'Nerdminer' && customAPName) {
+    if (selectedDevice === 'NerdMiner' && customAPName) {
       if (!validateSSID(apName)) {
         setStatus('Invalid AP name. Must be 1-31 characters, no spaces, only letters, numbers, underscore and hyphen.');
         return;
@@ -773,81 +791,21 @@ export default function LandingHero() {
         throw new Error('No firmware available for the selected device and board version');
       }
 
-      // Handle single file flashing for all devices (now including Nerdminer)
-      let firmwarePath;
-      let flashAddress = 0;
-      
-      if (selectedDevice === 'Nerdminer') {
-        // For Nerdminer, construct the path based on keep configuration setting
-        let boardName = selectedBoardVersion;
-        const version = selectedFirmware;
-        
-        // Handle the special case of the original board
-        if (boardName === 'NERDMINERV2 ORIGINAL BOARD (TDISPLAY-S3)') {
-          boardName = 'NerdminerV2';
-        }
-        
-        if (keepConfiguration) {
-          // Use firmware-only file and flash to 0x10000
-          firmwarePath = `${basePath}/firmware/nerdminer/${version}/${boardName}_firmware.bin`;
-          flashAddress = 0x10000;
-        } else {
-          // Use factory file and flash to 0x0000
-          firmwarePath = `${basePath}/firmware/nerdminer/${version}/${boardName}_factory.bin`;
-          flashAddress = 0x0000;
-        }
-      } else if (selectedDevice === 'Nerdaxe' || selectedDevice === 'NerdQaxe') {
-        // For Nerdaxe and NerdQaxe, construct the path based on keep configuration setting
-        const version = selectedFirmware;
-        let deviceFileName;
-        
-        // Map display names to file names
-        if (selectedDevice === 'Nerdaxe') {
-          if (selectedBoardVersion === 'Ultra') {
-            deviceFileName = 'NerdAxe';
-          } else if (selectedBoardVersion === 'Gamma') {
-            deviceFileName = 'NerdAxeGamma';
-          }
-        } else if (selectedDevice === 'NerdQaxe') {
-          if (selectedBoardVersion === '++ (4.8THs)') {
-            deviceFileName = 'NerdQAxe++';
-          } else if (selectedBoardVersion === '+ (2.4THs)') {
-            deviceFileName = 'NerdQAxe+';
-          }
-        }
-        
-        if (keepConfiguration) {
-          // Use firmware-only file and flash to 0x10000
-          firmwarePath = `${basePath}/firmware/nerdqaxe/${version}/${deviceFileName}_firmware.bin`;
-          flashAddress = 0x10000;
-        } else {
-          // Use factory file and flash to 0x0000
-          firmwarePath = `${basePath}/firmware/nerdqaxe/${version}/${deviceFileName}_factory.bin`;
-          flashAddress = 0x0000;
-        }
-      } else if (selectedDevice === 'Bitaxe') {
-        // For Bitaxe, construct the path based on keep configuration setting
-        const version = selectedFirmware;
-        let deviceFileName;
-        
-        // Map display names to file names
-        if (selectedBoardVersion === 'Supra 401') {
-          deviceFileName = 'Supra401';
-        } else if (selectedBoardVersion === 'Gamma 601') {
-          deviceFileName = 'Gamma601';
-        }
-        
-        if (keepConfiguration) {
-          // Use firmware-only file and flash to 0x10000
-          firmwarePath = `${basePath}/firmware/bitaxe/${version}/${deviceFileName}_firmware.bin`;
-          flashAddress = 0x10000;
-        } else {
-          // Use factory file and flash to 0x0000
-          firmwarePath = `${basePath}/firmware/bitaxe/${version}/${deviceFileName}_factory.bin`;
-          flashAddress = 0x0000;
-        }
+      // Every device resolves the same way now that a board remembers the file
+      // it came from: the factory image at 0x0, or the firmware-only image at
+      // 0x10000 when the user asked to keep their configuration.
+      let firmwarePath: string;
+      let flashAddress: number;
+
+      const source = DEVICE_SOURCES.find((s) => s.device === selectedDevice);
+      const boardFile = (board as Board).file;
+
+      if (source && boardFile) {
+        const keeping = keepConfiguration && source.keepsConfiguration === true;
+        const image = keeping ? 'firmware' : 'factory';
+        firmwarePath = `${basePath}/firmware/${source.slug}/${selectedFirmware}/${boardFile}_${image}.bin`;
+        flashAddress = keeping ? 0x10000 : 0x0000;
       } else {
-        // For other devices, use the regular path
         firmwarePath = firmware.path;
         flashAddress = 0;
       }
@@ -891,7 +849,7 @@ export default function LandingHero() {
       setStatus(t('status.completed'));
 
       // Flash custom AP name if enabled for Nerdminer - only for specific boards
-      if (selectedDevice === 'Nerdminer' && 
+      if (selectedDevice === 'NerdMiner' && 
           customAPName && 
           apName && 
           validateSSID(apName) &&
@@ -928,10 +886,14 @@ export default function LandingHero() {
     setSelectedDevice(name);
     setSelectedBoardVersion('');
     setSelectedFirmware('');
+    // The checkbox is hidden for devices that ship no firmware-only image, so
+    // leaving it ticked from a previous device would quietly ask for a file
+    // that does not exist.
+    setKeepConfiguration(false);
     setIsModalOpen(false);
     
     // Change background for Nerdminer
-    if (name === 'Nerdminer') {
+    if (name === 'NerdMiner') {
       document.body.style.background = `linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.85)), url('${basePath}/pictures/fondoNM3.png')`;
       document.body.classList.remove('nerdminer-bg');
     } else {
@@ -963,11 +925,14 @@ export default function LandingHero() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center gap-8">
             <div className="space-y-2 mb-14">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                {selectedDevice === 'Nerdminer' 
-                  ? 'Flash, play and learn with nerdminer'
-                  : t('hero.title')
-                }
+              <h1 className="font-display text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                <Headline
+                  text={
+                    selectedDevice === 'NerdMiner'
+                      ? 'Flash, play and learn with NerdMiner'
+                      : t('hero.title')
+                  }
+                />
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
                 {t('hero.description')}
@@ -1019,12 +984,14 @@ export default function LandingHero() {
                   values={board.supported_firmware.map((f: any) => f.version)}
                   onValueChange={setSelectedFirmware}
                   disabled={isConnecting || isFlashing || selectedBoardVersion === ''}
+                  mono
+                  markFirstAsLatest
                 />
               </div>
             </div>
             
-            {/* Keep Configuration Checkbox (for Nerdminer, Nerdaxe, NerdQaxe, and Bitaxe - NOT for NerdNos) */}
-            {(selectedDevice === 'Nerdminer' || selectedDevice === 'Nerdaxe' || selectedDevice === 'NerdQaxe' || selectedDevice === 'Bitaxe') && (
+            {/* Only for devices that publish a firmware-only image */}
+            {DEVICE_SOURCES.find((s) => s.device === selectedDevice)?.keepsConfiguration && (
               <div className="flex flex-col items-center space-y-4 justify-center">
                 <div className="flex items-center space-x-2 justify-center">
                   <input
@@ -1032,7 +999,7 @@ export default function LandingHero() {
                     id="keepConfiguration"
                     checked={keepConfiguration}
                     onChange={(e) => setKeepConfiguration(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    className="w-4 h-4 accent-bitronics bg-gray-100 border-gray-300 rounded focus:ring-bitronics dark:focus:ring-bitronics dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label htmlFor="keepConfiguration" className="text-sm font-medium text-gray-900 dark:text-gray-300">
                     {t('hero.keepConfiguration')}
@@ -1046,7 +1013,7 @@ export default function LandingHero() {
                       id="customAPName"
                       checked={customAPName}
                       onChange={(e) => setCustomAPName(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      className="w-4 h-4 accent-bitronics bg-gray-100 border-gray-300 rounded focus:ring-bitronics dark:focus:ring-bitronics dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="customAPName" className="text-sm font-medium text-gray-900 dark:text-gray-300">
                       Custom Access Point Name
@@ -1062,7 +1029,7 @@ export default function LandingHero() {
                       onChange={(e) => setApName(e.target.value)}
                       placeholder="Enter AP name (max 31 chars)"
                       maxLength={31}
-                      className="w-64 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                      className="w-64 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bitronics focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                     />
                     {apName && !validateSSID(apName) && (
                       <p className="text-xs text-red-500">
