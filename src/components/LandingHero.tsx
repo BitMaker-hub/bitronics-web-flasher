@@ -57,6 +57,10 @@ export default function LandingHero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBoardPickerOpen, setIsBoardPickerOpen] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+  const [verifying, setVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  // The file checked on selection is the file flashed, so it is only fetched once.
+  const checkedBytesRef = useRef<{ path: string; bytes: ArrayBuffer } | null>(null);
   const [verification, setVerification] = useState<{
     digest: string;
     upstream: { repo: string; asset: string } | null;
@@ -232,6 +236,62 @@ export default function LandingHero() {
     selectedFirmware !== ''
       ? board.supported_firmware.find((f: any) => f.version == selectedFirmware)!
       : { path: '' };
+
+  // The image that will actually be written: the factory one, unless the user
+  // asked to keep their configuration, in which case it is the firmware-only
+  // build — which has no recorded hash, so there is nothing to check it against.
+  const plannedPath =
+    selectedFirmware !== '' && (board as Board).file && sourceFor(selectedDevice)
+      ? `${basePath}/firmware/${sourceFor(selectedDevice)!.slug}/${selectedFirmware}/${(board as Board).file}_${
+          keepConfiguration && sourceFor(selectedDevice)!.keepsConfiguration
+            ? 'firmware'
+            : 'factory'
+        }.bin`
+      : null;
+
+  // Check on selection rather than at flash time, so the answer is on screen
+  // before anyone commits to writing anything. The bytes are kept for the
+  // flash itself, so this costs no extra download.
+  useEffect(() => {
+    const target = firmware as Firmware;
+
+    if (!plannedPath || !target?.sha256 || plannedPath !== target.path) {
+      setVerification(null);
+      setVerifyError(null);
+      checkedBytesRef.current = null;
+      return;
+    }
+
+    let cancelled = false;
+    setVerifying(true);
+    setVerifyError(null);
+
+    (async () => {
+      try {
+        const response = await fetch(plannedPath);
+        if (!response.ok) throw new Error('Could not download the firmware to check it.');
+
+        const bytes = await response.arrayBuffer();
+        const result = await verifyFirmware(bytes, target);
+        if (cancelled) return;
+
+        checkedBytesRef.current = { path: plannedPath, bytes };
+        setVerification(result);
+      } catch (error) {
+        if (cancelled) return;
+        checkedBytesRef.current = null;
+        setVerification(null);
+        setVerifyError(error instanceof Error ? error.message : String(error));
+      } finally {
+        if (!cancelled) setVerifying(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plannedPath]);
 
   // Ask the chip what it is, so a device with more boards than anyone can
   // scan can narrow itself down. Reuses the open port when there is one and
@@ -895,16 +955,22 @@ export default function LandingHero() {
         flashAddress = 0;
       }
 
-      const firmwareResponse = await fetch(firmwarePath);
-      if (!firmwareResponse.ok) {
-        throw new Error('Failed to load firmware file');
+      // Already downloaded and checked when the version was picked.
+      const cached = checkedBytesRef.current;
+      let firmwareArrayBuffer: ArrayBuffer;
+
+      if (cached && cached.path === firmwarePath) {
+        firmwareArrayBuffer = cached.bytes;
+      } else {
+        const firmwareResponse = await fetch(firmwarePath);
+        if (!firmwareResponse.ok) {
+          throw new Error('Failed to load firmware file');
+        }
+        firmwareArrayBuffer = await firmwareResponse.arrayBuffer();
+
+        setStatus('Checking the firmware…');
+        setVerification(await verifyFirmware(firmwareArrayBuffer, firmware as Firmware));
       }
-
-      const firmwareArrayBuffer = await firmwareResponse.arrayBuffer();
-
-      setStatus('Checking the firmware…');
-      const checked = await verifyFirmware(firmwareArrayBuffer, firmware as Firmware);
-      setVerification(checked);
 
       const firmwareUint8Array = new Uint8Array(firmwareArrayBuffer);
       const firmwareBinaryString = Array.from(firmwareUint8Array, (byte) =>
@@ -1102,6 +1168,56 @@ export default function LandingHero() {
                 />
               </div>
             </div>
+
+            {/* The answer before anyone commits to writing anything */}
+            {(verifying || verification || verifyError) && (
+              <div className="mx-auto w-full max-w-lg">
+                {verifying && (
+                  <div className="flex items-center justify-center gap-2 text-xs text-white/50">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Checking this firmware…
+                  </div>
+                )}
+
+                {verifyError && !verifying && (
+                  <div className="flex items-center justify-center gap-2 rounded-lg border border-[var(--color-danger)]/40 bg-[var(--color-danger)]/10 px-3 py-2 text-xs text-white/80">
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--color-danger)]" />
+                    {verifyError}
+                  </div>
+                )}
+
+                {verification && !verifying && (
+                  <div className="rounded-lg border border-[var(--color-success)]/40 bg-[var(--color-success)]/10 px-3 py-2.5">
+                    <div className="flex items-center justify-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--color-success)]" />
+                      <span className="text-sm font-semibold text-white">
+                        {verification.upstream ? 'Verified firmware' : 'Checksum matches'}
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-center text-[11px] leading-relaxed text-white/50">
+                      {verification.upstream ? (
+                        <>
+                          Hashes to what{' '}
+                          <span className="font-data">{verification.upstream.repo}</span> published
+                          as <span className="font-data">{verification.upstream.asset}</span>. The
+                          file came from this site, the hash came from GitHub.
+                        </>
+                      ) : (
+                        <>
+                          Matches the hash on file. The published release could not be reached, so
+                          it was not cross-checked against it.
+                        </>
+                      )}
+                    </p>
+
+                    <p className="font-data mt-1.5 break-all text-center text-[10px] text-white/25">
+                      {verification.digest}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Only for devices that publish a firmware-only image */}
             {sourceFor(selectedDevice)?.keepsConfiguration && (
