@@ -5,5 +5,12 @@
   ],
   "sha256": {
     "NerdOctaxeGamma": "9ae752c423f5a6bdb4662dac45b66188cabf382d2af80dbf2cb8dc4fb99d401e"
+  },
+  "upstream": {
+    "repo": "shufps/ESP-Miner-NerdQAxePlus",
+    "tag": "v1.0.35",
+    "assets": {
+      "NerdOctaxeGamma": "esp-miner-factory-NerdOCTAXE-Gamma-v1.0.35.bin"
+    }
   }
 }

@@ -3,5 +3,17 @@
   "boards": [
     "Supra401",
     "Gamma601"
-  ]
+  ],
+  "sha256": {
+    "Supra401": "0137f4dae7f1fec8de89e791c7acc61599f756d87dd755f4458900064127293b",
+    "Gamma601": "c1168c0f19e06bea104f7844d62c1bca1d630f38aa4d55539ebcfb2950c80180"
+  },
+  "upstream": {
+    "repo": "bitaxeorg/ESP-Miner",
+    "tag": "v2.15.0",
+    "assets": {
+      "Supra401": "esp-miner-factory-401-v2.15.0.bin",
+      "Gamma601": "esp-miner-factory-601-v2.15.0.bin"
+    }
+  }
 }

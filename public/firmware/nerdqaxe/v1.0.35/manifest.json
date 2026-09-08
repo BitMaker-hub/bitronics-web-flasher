@@ -5,5 +5,21 @@
     "NerdQAxe+",
     "NerdAxe",
     "NerdAxeGamma"
-  ]
+  ],
+  "sha256": {
+    "NerdQAxe++": "9fc1b2046314942944df95c2f39b4d9833aa75a879972ed0a1569f20f4985f16",
+    "NerdQAxe+": "34bc1ad2adacbb3ec110c23ebd9ce338befeb3d534aea23e41148ebe8be77526",
+    "NerdAxe": "c6945e3ed7b89b33bd1c44d254559c5b555ff3ca4c6e797529bcc3af41092aed",
+    "NerdAxeGamma": "c1c3a7fdaaaa2cc1d33da63b695f35cf1850f46a929433b173353ed69222d407"
+  },
+  "upstream": {
+    "repo": "shufps/ESP-Miner-NerdQAxePlus",
+    "tag": "v1.0.35",
+    "assets": {
+      "NerdQAxe++": "esp-miner-factory-NerdQAxe++-v1.0.35.bin",
+      "NerdQAxe+": "esp-miner-factory-NerdQAxe+-v1.0.35.bin",
+      "NerdAxe": "esp-miner-factory-NerdAxe-v1.0.35.bin",
+      "NerdAxeGamma": "esp-miner-factory-NerdAxeGamma-v1.0.35.bin"
+    }
+  }
 }

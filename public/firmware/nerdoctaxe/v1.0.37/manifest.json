@@ -2,5 +2,15 @@
   "version": "v1.0.37",
   "boards": [
     "NerdOctaxeGamma"
-  ]
+  ],
+  "sha256": {
+    "NerdOctaxeGamma": "2273d3865d2332e3c301ac3b3f370686bc1c74708b7140c75732a7490851e90a"
+  },
+  "upstream": {
+    "repo": "shufps/ESP-Miner-NerdQAxePlus",
+    "tag": "v1.0.37",
+    "assets": {
+      "NerdOctaxeGamma": "esp-miner-factory-NerdOCTAXE-Gamma-v1.0.37.bin"
+    }
+  }
 }

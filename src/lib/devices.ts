@@ -1,4 +1,13 @@
-export type Firmware = { version: string; path: string };
+/** Where an upstream release published this exact file, when we know. */
+export type Upstream = { repo: string; tag: string; asset: string };
+
+export type Firmware = {
+  version: string;
+  path: string;
+  /** What the file should hash to, recorded when it was fetched. */
+  sha256?: string;
+  upstream?: Upstream;
+};
 export type Board = { name: string; file: string; supported_firmware: Firmware[] };
 
 export type DeviceCategory = 'miners' | 'tools';

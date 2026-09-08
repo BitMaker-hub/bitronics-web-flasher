@@ -21,7 +21,7 @@ import InstructionPanel from './InstructionPanel';
 import DeviceModal from './DeviceModal';
 import Selector from './Selector';
 import device_data from './firmware_data.json';
-import { Board, DEVICE_SOURCES, DeviceSource, sourceFor } from '@/lib/devices';
+import { Board, DEVICE_SOURCES, DeviceSource, Firmware, sourceFor } from '@/lib/devices';
 import { Chip, chipFromEsptool } from '@/lib/boards';
 import BoardPicker from './BoardPicker';
 import DeviceIntro from './DeviceIntro';
@@ -57,6 +57,10 @@ export default function LandingHero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBoardPickerOpen, setIsBoardPickerOpen] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
+  const [verification, setVerification] = useState<{
+    digest: string;
+    upstream: { repo: string; asset: string } | null;
+  } | null>(null);
   const [isChromiumBased, setIsChromiumBased] = useState(true);
   const [keepConfiguration, setKeepConfiguration] = useState(false);
   const [customAPName, setCustomAPName] = useState(false);
@@ -110,10 +114,17 @@ export default function LandingHero() {
             boards.set(displayName, { name: displayName, file: boardName, supported_firmware: [] });
           }
 
+          const asset = manifest.upstream?.assets?.[boardName];
+
           // Newest first, because the versions arrive in that order.
           boards.get(displayName)!.supported_firmware.push({
             version: version,
             path: `${basePath}/firmware/${source.slug}/${version}/${boardName}_factory.bin`,
+            sha256: manifest.sha256?.[boardName],
+            upstream:
+              manifest.upstream && asset
+                ? { repo: manifest.upstream.repo, tag: manifest.upstream.tag, asset }
+                : undefined,
           });
         }
       } catch (error) {
@@ -259,6 +270,55 @@ export default function LandingHero() {
       } else {
         await transport.disconnect().catch(() => {});
       }
+    }
+  };
+
+  // Confirm the bytes about to be written are the ones upstream published.
+  //
+  // Hashing the download against a hash this same site serves only proves the
+  // transfer was clean: a site serving a bad file would serve a matching bad
+  // hash. The check that means something is the second one, where the expected
+  // hash is fetched from GitHub — the file comes from here, the answer comes
+  // from somewhere else, and both would have to be compromised to agree.
+  //
+  // Only images we could match to a published asset carry that pointer.
+  const verifyFirmware = async (bytes: ArrayBuffer, firmware: Firmware) => {
+    const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    if (firmware.sha256 && digest !== firmware.sha256) {
+      throw new Error(
+        'The downloaded file does not match the hash recorded for it. Nothing was written.',
+      );
+    }
+
+    if (!firmware.upstream) return { digest, upstream: null };
+
+    const { repo, tag, asset } = firmware.upstream;
+
+    try {
+      const response = await fetch(`https://api.github.com/repos/${repo}/releases/tags/${tag}`);
+      if (!response.ok) return { digest, upstream: null };
+
+      const release = await response.json();
+      const published = release.assets?.find((a: any) => a.name === asset);
+      const expected = published?.digest?.replace(/^sha256:/, '');
+
+      // GitHub not answering is not evidence of anything, so it is reported
+      // as "not checked" rather than treated as a failure.
+      if (!expected) return { digest, upstream: null };
+
+      if (expected !== digest) {
+        throw new Error(
+          `This file does not match what ${repo} published as ${asset}. Nothing was written.`,
+        );
+      }
+
+      return { digest, upstream: { repo, asset } };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes(repo)) throw error;
+      return { digest, upstream: null };
     }
   };
 
@@ -841,6 +901,11 @@ export default function LandingHero() {
       }
 
       const firmwareArrayBuffer = await firmwareResponse.arrayBuffer();
+
+      setStatus('Checking the firmware…');
+      const checked = await verifyFirmware(firmwareArrayBuffer, firmware as Firmware);
+      setVerification(checked);
+
       const firmwareUint8Array = new Uint8Array(firmwareArrayBuffer);
       const firmwareBinaryString = Array.from(firmwareUint8Array, (byte) =>
         String.fromCharCode(byte),
@@ -916,6 +981,7 @@ export default function LandingHero() {
     setSelectedDevice(name);
     setSelectedBoardVersion('');
     setSelectedFirmware('');
+    setVerification(null);
     // The checkbox is hidden for devices that ship no firmware-only image, so
     // leaving it ticked from a previous device would quietly ask for a file
     // that does not exist.
@@ -1179,6 +1245,29 @@ export default function LandingHero() {
                     </div>
                   )}
 
+                  {verification && (
+                    <div className="mt-3 border-t border-white/10 pt-2.5">
+                      {verification.upstream ? (
+                        <p className="text-xs leading-relaxed text-white/60">
+                          <span className="text-[var(--color-success)]">Verified.</span> This file
+                          hashes to what{' '}
+                          <span className="font-data">{verification.upstream.repo}</span> published
+                          as <span className="font-data">{verification.upstream.asset}</span>. The
+                          binary came from this site, the hash it was checked against came from
+                          GitHub.
+                        </p>
+                      ) : (
+                        <p className="text-xs leading-relaxed text-white/60">
+                          The download matches the hash on file. The published release could not be
+                          reached, so it was not cross-checked against it.
+                        </p>
+                      )}
+                      <p className="font-data mt-1.5 break-all text-[10px] text-white/30">
+                        {verification.digest}
+                      </p>
+                    </div>
+                  )}
+
                   {nextStep && (
                     <p className="mt-2.5 text-xs leading-relaxed text-white/50">{nextStep}</p>
                   )}
@@ -1221,6 +1310,7 @@ export default function LandingHero() {
         onSelect={(board) => {
           setSelectedBoardVersion(board);
           setSelectedFirmware('');
+          setVerification(null);
           setIsBoardPickerOpen(false);
         }}
         onDetect={sourceFor(selectedDevice)?.detectChip ? detectChip : undefined}
