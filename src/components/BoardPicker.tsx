@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Search, X, Usb, Loader2 } from 'lucide-react';
 import { Board, DeviceSource } from '@/lib/devices';
-import { Chip, CHIPS, chipOf, pictureFor, vendorOf } from '@/lib/boards';
-
-const basePath = '';
+import { Chip, CHIPS, chipOf, vendorOf } from '@/lib/boards';
+import BoardArt from './BoardArt';
 
 interface BoardPickerProps {
   isOpen: boolean;
@@ -14,34 +13,6 @@ interface BoardPickerProps {
   onSelect: (board: string) => void;
   /** Reads the chip off the connected device. Resolves to null if it cannot. */
   onDetect?: () => Promise<Chip | null>;
-}
-
-/**
- * A board with no photo yet still needs to look deliberate rather than broken,
- * so it falls back to its chip on a plain tile.
- */
-function BoardArt({ board }: { board: string }) {
-  const [failed, setFailed] = useState(false);
-  const chip = chipOf(board);
-
-  useEffect(() => setFailed(false), [board]);
-
-  if (failed) {
-    return (
-      <div className="flex h-20 w-full items-center justify-center rounded-lg border border-dashed border-white/10 bg-black/30">
-        <span className="font-data text-[11px] text-white/30">{chip}</span>
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={`${basePath}${pictureFor(board)}`}
-      alt={board}
-      onError={() => setFailed(true)}
-      className="h-20 w-full object-contain"
-    />
-  );
 }
 
 export default function BoardPicker({
@@ -57,6 +28,14 @@ export default function BoardPicker({
   const [query, setQuery] = useState('');
   const [detecting, setDetecting] = useState(false);
   const [detectNote, setDetectNote] = useState<string | null>(null);
+  // The dialog is always in the tree so it can fade, which means its tiles
+  // would fetch three megabytes of board photos before anyone asked to see
+  // them. Nothing is built until the first open; after that it stays built so
+  // reopening still animates.
+  const [everOpened, setEverOpened] = useState(false);
+  useEffect(() => {
+    if (isOpen) setEverOpened(true);
+  }, [isOpen]);
 
   // A fresh device deserves a fresh filter.
   useEffect(() => {
@@ -200,7 +179,7 @@ export default function BoardPicker({
           </div>
 
           <div className="px-6 py-6">
-            {visible.length === 0 ? (
+            {!everOpened ? null : visible.length === 0 ? (
               <p className="py-10 text-center text-sm text-white/40">
                 No board matches that. Try clearing the filters.
               </p>
@@ -218,7 +197,7 @@ export default function BoardPicker({
                           : 'border-[var(--color-hairline)] bg-[var(--color-surface)] hover:border-white/25'
                       }`}
                     >
-                      <BoardArt board={board.file} />
+                      <BoardArt board={board.file} className="aspect-[5/4] w-full" />
                       <span className="mt-3 text-sm font-medium leading-tight text-white">
                         {board.name}
                       </span>

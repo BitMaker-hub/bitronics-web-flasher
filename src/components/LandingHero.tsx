@@ -24,6 +24,7 @@ import device_data from './firmware_data.json';
 import { Board, DEVICE_SOURCES, DeviceSource, Firmware, sourceFor } from '@/lib/devices';
 import { Chip, chipFromEsptool } from '@/lib/boards';
 import BoardPicker from './BoardPicker';
+import BoardArt from './BoardArt';
 import DeviceIntro from './DeviceIntro';
 
 import { Terminal } from '@xterm/xterm';
@@ -1140,11 +1141,27 @@ export default function LandingHero() {
                 </Button>
               </div>
               <div className="flex flex-col justify-center w-52">
-                <Cpu
-                  className="mb-3 m-auto h-14 w-14 md:h-16 md:w-16"
-                  color="#6B7280"
-                  strokeWidth={1}
-                />
+                {selectedBoardVersion === '' ? (
+                  <Cpu
+                    className="mb-3 m-auto h-14 w-14 md:h-16 md:w-16"
+                    color="#6B7280"
+                    strokeWidth={1}
+                  />
+                ) : (
+                  // Once a board is chosen, show the board rather than an idea
+                  // of one. Boards with no drawing yet keep the icon.
+                  <BoardArt
+                    board={(board as Board).file}
+                    className="mb-3 m-auto h-14 w-14 md:h-16 md:w-16"
+                    fallback={
+                      <Cpu
+                        className="mb-3 m-auto h-14 w-14 md:h-16 md:w-16"
+                        color="#6B7280"
+                        strokeWidth={1}
+                      />
+                    }
+                  />
+                )}
                 <Button
                   onClick={() => setIsBoardPickerOpen(true)}
                   disabled={isConnecting || isFlashing || selectedDevice === ''}

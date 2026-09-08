@@ -24,6 +24,16 @@ const CHIP_OVERRIDES: Record<string, Chip> = {
   'm5-stamps3': 'ESP32-S3',
   'wt32-sc01-plus': 'ESP32-S3',
   'm5stick-c-plus2': 'ESP32',
+  // The axes name their ASIC, never their controller. All of them run
+  // ESP-Miner on an ESP32-S3-WROOM-1 — the module is legible in the Bitaxe
+  // photo this site already ships.
+  supra401: 'ESP32-S3',
+  gamma601: 'ESP32-S3',
+  nerdaxe: 'ESP32-S3',
+  nerdaxegamma: 'ESP32-S3',
+  'nerdqaxe+': 'ESP32-S3',
+  'nerdqaxe++': 'ESP32-S3',
+  nerdoctaxegamma: 'ESP32-S3',
 };
 
 const words = (board: string) => board.toLowerCase().split(/[-_\s.]+/);
@@ -71,7 +81,11 @@ export function vendorOf(board: string): { id: string; label: string } {
   return hit ? { id: hit.id, label: hit.label } : { id: 'other', label: 'Other' };
 }
 
-/** The photo for a board, when somebody has dropped one in. */
+/**
+ * The photo for a board, when somebody has dropped one in. The name is escaped
+ * because a couple of boards are called things like NerdQAxe++, and a bare +
+ * in a path is read as a space by more servers than you would hope.
+ */
 export function pictureFor(board: string) {
-  return `/pictures/boards/${board}.png`;
+  return `/pictures/boards/${encodeURIComponent(board)}.png`;
 }
