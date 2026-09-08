@@ -4,6 +4,20 @@ export type Board = { name: string; file: string; supported_firmware: Firmware[]
 export type DeviceCategory = 'miners' | 'tools';
 
 /**
+ * What a device says for itself. Swapping the background was never enough:
+ * somebody arriving at a seed generator deserves to be told what it is before
+ * being handed a Flash button.
+ */
+export type DeviceIntro = {
+  kicker: string;
+  /** The last word is set in gold, so end on the word that matters. */
+  headline: string;
+  body: string;
+  points: { title: string; body: string }[];
+  cta?: { label: string; href: string; note?: string };
+};
+
+/**
  * Every device is served the same way: a main manifest lists the versions, and
  * each version's manifest lists the boards that version was built for. The only
  * things that change from one device to the next are which boards belong to it,
@@ -23,6 +37,7 @@ export type DeviceSource = {
    * headline, so a banner can be dropped in later without a code change.
    */
   banner?: string;
+  intro?: DeviceIntro;
   /** Where to buy it, when we sell it */
   shop?: string;
   keepsConfiguration?: boolean; // ships a firmware-only image to flash at 0x10000
@@ -121,6 +136,36 @@ export const DEVICE_SOURCES: DeviceSource[] = [
     device: 'Seeder',
     category: 'tools',
     banner: '/pictures/banners/seeder.png',
+    // Every claim here is one the project documents in SECURITY.md. Nothing
+    // about a seed generator should be sold harder than it can be proven.
+    intro: {
+      kicker: 'Offline seed generator',
+      headline: 'The randomness is yours',
+      body: 'The SEEDER has no random number generator. You bring the entropy with a coin or a die and the device does the BIP39 arithmetic in front of you. A generator that makes its own randomness asks you to trust its silicon, its firmware, and whoever sold it to you.',
+      points: [
+        {
+          title: 'You roll it, it only counts',
+          body: 'A coin gives 128 tosses for twelve words, and the bits are the entropy, raw and unhashed. A die gives 50 rolls, hashed with SHA-256 over the ASCII digits. The Entropy (hex) screen shows the exact bytes, so you can redo the whole thing with any offline BIP39 tool and check it agrees.',
+        },
+        {
+          title: 'The seed never reaches the flash',
+          body: 'It lives in RAM and is gone the moment you unplug it. The firmware prints nothing over serial. Nothing to extract later, because nothing was kept.',
+        },
+        {
+          title: 'Check what you actually flashed',
+          body: 'The flash is deliberately left unencrypted so that esptool verify_flash --no-stub still works: with the stub disabled it is the chip ROM that answers, so a tampered firmware cannot lie about what is on it. That command, and the hashes to compare, are in the project README.',
+        },
+        {
+          title: 'Or start from one that is already signed',
+          body: 'Units sold pre-flashed by Bitronics run Secure Boot v2: only firmware signed with our key boots. That proves the firmware is the one we signed, not that it is good — the checks above are what prove that. A unit you build yourself stays completely open, with no lock of any kind.',
+        },
+      ],
+      cta: {
+        label: 'Read the security model',
+        href: 'https://github.com/BitMaker-hub/Seeder/blob/master/SECURITY.md',
+        note: 'It is written so you can distrust the device with some criteria, which is the only healthy way to use one.',
+      },
+    },
     tagline: 'BIP39 seed generator',
     slug: 'seeder',
     label: { TDisplay: 'TTGO T-Display', TDisplayS3: 'LilyGO T-Display-S3' },

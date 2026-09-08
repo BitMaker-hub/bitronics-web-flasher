@@ -42,6 +42,11 @@
   --color-chrome-light: #26262A;
   --color-hairline: #2A2A2E;
   --color-muted-ink: #8A8A8F;
+  /* The light half of the palette. The pool alternates dark, gold and light
+     bands rather than running black end to end, and so does this. */
+  --color-ink: #1D1D1F;            /* text on a light surface */
+  --color-band-light: #FAFAFA;     /* the light band itself */
+  --color-hairline-light: #E2E0DA;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -221,12 +226,6 @@ body {
 }
 
 
-/* Features section: dark like the rest, gold as the single accent */
-.features-section {
-  background-color: var(--color-chrome);
-  border-top: 1px solid var(--color-hairline);
-}
-
 /* Custom selector styling - more specific */
 [data-radix-select-trigger],
 button[data-radix-select-trigger],
@@ -397,4 +396,21 @@ body {
   padding: 2px 6px;
   border-radius: 3px;
   line-height: 1.4;
+}
+
+/* Bands. A page that is dark from top to bottom reads as one long surface, so
+   the sections alternate the way the pool site does. */
+.band-light {
+  background-color: var(--color-band-light);
+  color: var(--color-ink);
+}
+
+.band-gold {
+  background-color: var(--color-bitronics);
+  color: var(--color-gold-ink);
+}
+
+.band-dark {
+  background-color: #111113;
+  color: #ffffff;
 }

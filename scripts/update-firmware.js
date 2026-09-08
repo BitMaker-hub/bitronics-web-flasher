@@ -129,11 +129,17 @@ const FIRMWARE_REPOS = {
 // than from every visitor's browser: GitHub allows sixty unauthenticated calls
 // an hour per address, and the page should not go blank because somebody else
 // on the same network used them up.
+// `devices` is what each repository actually feeds on this site, which is not
+// always one to one: one NerdQaxe repository covers three of our devices.
 const FOLLOWED_PROJECTS = [
-  { name: 'Bitaxe', owner: 'bitaxeorg', repo: 'ESP-Miner' },
-  { name: 'NerdQaxe & Octaxe', owner: 'shufps', repo: 'ESP-Miner-NerdQAxePlus' },
-  { name: 'NerdMiner', owner: 'BitMaker-hub', repo: 'NerdMiner_v2' },
-  { name: 'Seeder', owner: 'BitMaker-hub', repo: 'Seeder' },
+  { owner: 'bitaxeorg', repo: 'ESP-Miner', devices: ['Bitaxe'] },
+  {
+    owner: 'shufps',
+    repo: 'ESP-Miner-NerdQAxePlus',
+    devices: ['Nerdaxe', 'NerdQaxe', 'NerdOctaxe'],
+  },
+  { owner: 'BitMaker-hub', repo: 'NerdMiner_v2', devices: ['NerdMiner'] },
+  { owner: 'BitMaker-hub', repo: 'Seeder', devices: ['Seeder'] },
 ];
 
 class FirmwareUpdater {
@@ -509,14 +515,14 @@ class FirmwareUpdater {
           }));
 
         projects.push({
-          name: project.name,
           repo: `${project.owner}/${project.repo}`,
+          devices: project.devices,
           url: `https://github.com/${project.owner}/${project.repo}/releases`,
           releases,
         });
-        console.log(`   ${project.name}: ${releases.length} release(s)`);
+        console.log(`   ${project.owner}/${project.repo}: ${releases.length} release(s)`);
       } catch (error) {
-        console.log(`⚠️  Could not read releases for ${project.name}: ${error.message}`);
+        console.log(`⚠️  Could not read releases for ${project.repo}: ${error.message}`);
       }
     }
 

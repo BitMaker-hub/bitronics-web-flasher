@@ -13,6 +13,7 @@ import device_data from './firmware_data.json';
 import { Board, DEVICE_SOURCES, DeviceSource, sourceFor } from '@/lib/devices';
 import { Chip, chipFromEsptool } from '@/lib/boards';
 import BoardPicker from './BoardPicker';
+import DeviceIntro from './DeviceIntro';
 
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
@@ -931,11 +932,14 @@ export default function LandingHero() {
                 />
                 <div className="absolute inset-0 flex items-center bg-gradient-to-r from-black via-black/80 to-transparent px-6 text-left md:px-12">
                   <div className="max-w-md">
-                    <p className="brand-kicker">{heroSource?.tagline ?? selectedDevice}</p>
+                    <p className="brand-kicker">
+                      {heroSource?.intro?.kicker ?? heroSource?.tagline ?? selectedDevice}
+                    </p>
                     <h1 className="font-display mt-1 text-3xl font-bold tracking-tighter text-white sm:text-4xl md:text-5xl">
                       {selectedDevice}
                     </h1>
-                    <p className="mt-2 text-sm text-white/60 md:text-base">{t('hero.description')}</p>
+                    {/* No blurb here on purpose: a device with a banner has an
+                        intro band right below that says it properly. */}
                   </div>
                 </div>
               </div>
@@ -1146,6 +1150,11 @@ export default function LandingHero() {
           </div>
         </div>
       </section>
+
+      {/* A device that has something to explain says it here, on a light band,
+          right under the controls it belongs to. */}
+      {heroSource?.intro && <DeviceIntro intro={heroSource.intro} shop={heroSource.shop} />}
+
       <InstructionPanel isOpen={isPanelOpen} onClose={() => setIsPanelOpen(false)} />
       <DeviceModal
         isOpen={isModalOpen}

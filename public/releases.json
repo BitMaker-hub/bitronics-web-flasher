@@ -1,9 +1,11 @@
 {
-  "generatedAt": "2026-09-08T01:06:42.568Z",
+  "generatedAt": "2026-09-08T07:49:42.467Z",
   "projects": [
     {
-      "name": "Bitaxe",
       "repo": "bitaxeorg/ESP-Miner",
+      "devices": [
+        "Bitaxe"
+      ],
       "url": "https://github.com/bitaxeorg/ESP-Miner/releases",
       "releases": [
         {
@@ -25,8 +27,12 @@
       ]
     },
     {
-      "name": "NerdQaxe & Octaxe",
       "repo": "shufps/ESP-Miner-NerdQAxePlus",
+      "devices": [
+        "Nerdaxe",
+        "NerdQaxe",
+        "NerdOctaxe"
+      ],
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
@@ -48,8 +54,10 @@
       ]
     },
     {
-      "name": "NerdMiner",
       "repo": "BitMaker-hub/NerdMiner_v2",
+      "devices": [
+        "NerdMiner"
+      ],
       "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases",
       "releases": [
         {
@@ -71,8 +79,10 @@
       ]
     },
     {
-      "name": "Seeder",
       "repo": "BitMaker-hub/Seeder",
+      "devices": [
+        "Seeder"
+      ],
       "url": "https://github.com/BitMaker-hub/Seeder/releases",
       "releases": [
         {
