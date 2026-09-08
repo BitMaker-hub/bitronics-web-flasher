@@ -43,7 +43,7 @@ export default function DeviceModal({ isOpen, onClose, selectDevice }: DeviceMod
           isOpen ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'
         }`}
       >
-        <div className="h-fit w-full max-w-5xl overflow-hidden rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-chrome)] shadow-2xl">
+        <div className="h-fit w-full max-w-4xl overflow-hidden rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-chrome)] shadow-2xl">
           <div className="sticky top-0 z-10 flex items-start justify-between border-b border-[var(--color-hairline)] bg-[var(--color-chrome)] px-6 py-5">
             <div>
               <p className="brand-kicker">Step 1</p>
@@ -60,7 +60,7 @@ export default function DeviceModal({ isOpen, onClose, selectDevice }: DeviceMod
             </button>
           </div>
 
-          <div className="space-y-10 px-6 py-7">
+          <div className="space-y-8 px-6 py-6">
             {sections.map((section) => (
               <section key={section.id}>
                 <div className="mb-4">
@@ -70,23 +70,23 @@ export default function DeviceModal({ isOpen, onClose, selectDevice }: DeviceMod
                   <p className="mt-0.5 text-sm text-white/40">{section.blurb}</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-6">
                   {section.devices.map(({ source, picture }) => (
                     <button
                       key={source.device}
                       onClick={() => selectDevice(source.device)}
-                      className="group flex flex-col items-center rounded-xl border border-[var(--color-hairline)] bg-[var(--color-surface)] p-4 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--color-bitronics)] hover:bg-[var(--color-chrome-light)]"
+                      className="group flex flex-col items-center rounded-xl border border-[var(--color-hairline)] bg-[var(--color-surface)] p-3 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--color-bitronics)] hover:bg-[var(--color-chrome-light)]"
                     >
                       <img
                         src={`${basePath}/${picture}`}
                         alt={source.device}
-                        className="h-20 w-20 object-contain transition-transform duration-200 group-hover:scale-105"
+                        className="h-14 w-14 object-contain transition-transform duration-200 group-hover:scale-105"
                       />
-                      <span className="mt-3 font-display text-sm font-semibold text-white">
+                      <span className="mt-2 font-display text-[13px] font-semibold leading-tight text-white">
                         {source.device}
                       </span>
                       {source.tagline && (
-                        <span className="font-data mt-1 text-[11px] text-white/40 group-hover:text-[var(--color-bitronics)]">
+                        <span className="font-data mt-0.5 text-[10px] leading-tight text-white/40 group-hover:text-[var(--color-bitronics)]">
                           {source.tagline}
                         </span>
                       )}
