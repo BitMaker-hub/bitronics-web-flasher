@@ -29,10 +29,19 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Brand gold. The single accent: everything else stays white or muted. */
-  --color-bitronics: #ECD400;
-  /* Reserved for numeric values, so it never fights with the gold. */
-  --color-bitcoin: #F7931A;
+  /* Bitronics design system, kept in step with the store theme's brand.css.
+     Rules that come with it: one accent per block, gold is a hit and not a
+     background, mono only for figures, and gold is never text on a light
+     surface (there it is a fill or a border). */
+  --color-bitronics: #ECD400;      /* brand gold */
+  --color-gold-ink: #4A4200;       /* text placed on gold */
+  --color-gold-deep: #7A6D00;      /* gold that stays legible on light */
+  --color-bitcoin: #F7931A;        /* figures and values only */
+  --color-surface: #161618;        /* cards */
+  --color-chrome: #1B1B1D;         /* header and footer */
+  --color-chrome-light: #26262A;
+  --color-hairline: #2A2A2E;
+  --color-muted-ink: #8A8A8F;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -193,20 +202,17 @@
   }
 }
 
-/* Header custom styles */
+/* Header chrome, same surface as the store */
 .header-custom {
-  background-color: #212121 !important;
+  background-color: var(--color-chrome);
+  border-bottom: 1px solid var(--color-hairline);
   width: 100vw;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 50;
-  color: white !important;
-}
-
-.header-custom * {
-  color: white !important;
+  color: #ffffff;
 }
 
 /* Add padding to body to compensate for fixed header */
@@ -214,28 +220,11 @@ body {
   padding-top: 5rem; /* 80px = h-20 */
 }
 
-/* Discord badge styling */
-.discord-badge {
-  filter: brightness(0.6) saturate(0.8);
-  background-color: #212121 !important;
-  border-radius: 4px;
-  padding: 2px;
-}
 
-/* Features section styling */
+/* Features section: dark like the rest, gold as the single accent */
 .features-section {
-  background-color: #EDF2F7 !important;
-  color: #212121 !important;
-}
-
-.features-section * {
-  color: #212121 !important;
-}
-
-.features-section .text-gray-500,
-.features-section .dark\\:text-gray-400 {
-  color: #212121 !important;
-  opacity: 0.8;
+  background-color: var(--color-chrome);
+  border-top: 1px solid var(--color-hairline);
 }
 
 /* Custom selector styling - more specific */
@@ -346,16 +335,6 @@ div[class*="select"] > div {
   width: 6.25rem; /* 100px - proportional for mobile */
 }
 
-/* Device Modal styling */
-.device-modal {
-  background-color: #212121 !important;
-  color: white !important;
-}
-
-.device-modal * {
-  color: white !important;
-}
-
 /* Fix dropdown layout shift */
 body {
   overflow-anchor: none;
@@ -387,5 +366,35 @@ body {
 
 .font-data {
   font-family: var(--font-data), ui-monospace, SFMono-Regular, monospace;
-  font-feature-settings: 'tnum';
+  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Small mono kicker with a dash, the house signature */
+.brand-kicker {
+  font-family: var(--font-data), ui-monospace, SFMono-Regular, monospace;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-bitronics);
+}
+
+.brand-kicker::before {
+  content: '— ';
+}
+
+/* The BITRONICS + FLASHER lockup, the same shape as the POOL badge */
+.brand-badge {
+  font-family: var(--font-data), ui-monospace, SFMono-Regular, monospace;
+  background: var(--color-bitronics);
+  color: var(--color-gold-ink);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.4;
 }

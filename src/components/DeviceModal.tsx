@@ -1,6 +1,9 @@
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import device_data from './firmware_data.json';
+import { CATEGORIES, DEVICE_SOURCES } from '@/lib/devices';
+
+const basePath = '';
 
 interface DeviceModalProps {
   isOpen: boolean;
@@ -10,45 +13,90 @@ interface DeviceModalProps {
 
 export default function DeviceModal({ isOpen, onClose, selectDevice }: DeviceModalProps) {
   const { t } = useTranslation();
-  const devices = device_data.devices;
+
+  // The picker follows the device table, so a device added there shows up here
+  // in its section without anyone remembering to come and edit this file.
+  const sections = CATEGORIES.map((category) => ({
+    ...category,
+    devices: DEVICE_SOURCES.filter((source) => source.category === category.id)
+      .map((source) => ({
+        source,
+        picture: device_data.devices.find((d) => d.name === source.device)?.picture,
+      }))
+      .filter((entry) => entry.picture),
+  })).filter((section) => section.devices.length > 0);
 
   return (
     <>
-      {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/50 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        } transition-opacity duration-300 z-40`}
+        className={`fixed inset-0 z-40 bg-black/80 backdrop-blur-sm transition-opacity duration-300 ${
+          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
         onClick={onClose}
       />
-      
-      {/* Modal */}
+
       <div
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-h-[85vh] w-full max-w-4xl px-4 overflow-scroll p-4 shadow-lg ${
-          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
-        } transition-all duration-300 ease-in-out rounded-lg z-50 device-modal`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('devicesModal.title')}
+        className={`fixed inset-0 top-20 z-50 flex justify-center overflow-y-auto px-4 py-6 transition-all duration-300 ease-out ${
+          isOpen ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'
+        }`}
       >
-      <button
-        className="absolute top-4 right-4 text-white hover:text-gray-300"
-        onClick={onClose}
-      >
-        <X className="h-6 w-6" />
-      </button>
-      <h2 className="text-xl font-bold mb-4 text-white">{t('devicesModal.title')}</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 justify-items-center p-6">
-        {devices.map((d) => (
-          <div
-            key={d.name}
-            className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity"
-            onClick={() => {
-              selectDevice(d.name);
-            }}
-          >
-            <img className="mb-2 w-24 h-24 object-contain" src={d.picture} alt={d.name} />
-            <div className="text-sm text-center text-white">{d.name}</div>
+        <div className="h-fit w-full max-w-5xl overflow-hidden rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-chrome)] shadow-2xl">
+          <div className="sticky top-0 z-10 flex items-start justify-between border-b border-[var(--color-hairline)] bg-[var(--color-chrome)] px-6 py-5">
+            <div>
+              <p className="brand-kicker">Step 1</p>
+              <h2 className="font-display text-xl font-bold tracking-tight text-white">
+                {t('devicesModal.title')}
+              </h2>
+            </div>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="rounded-lg p-1.5 text-white/50 transition-colors hover:bg-white/5 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-        ))}
-      </div>
+
+          <div className="space-y-10 px-6 py-7">
+            {sections.map((section) => (
+              <section key={section.id}>
+                <div className="mb-4">
+                  <h3 className="font-display text-base font-bold tracking-tight text-white">
+                    {section.title}
+                  </h3>
+                  <p className="mt-0.5 text-sm text-white/40">{section.blurb}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                  {section.devices.map(({ source, picture }) => (
+                    <button
+                      key={source.device}
+                      onClick={() => selectDevice(source.device)}
+                      className="group flex flex-col items-center rounded-xl border border-[var(--color-hairline)] bg-[var(--color-surface)] p-4 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--color-bitronics)] hover:bg-[var(--color-chrome-light)]"
+                    >
+                      <img
+                        src={`${basePath}/${picture}`}
+                        alt={source.device}
+                        className="h-20 w-20 object-contain transition-transform duration-200 group-hover:scale-105"
+                      />
+                      <span className="mt-3 font-display text-sm font-semibold text-white">
+                        {source.device}
+                      </span>
+                      {source.tagline && (
+                        <span className="font-data mt-1 text-[11px] text-white/40 group-hover:text-[var(--color-bitronics)]">
+                          {source.tagline}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );

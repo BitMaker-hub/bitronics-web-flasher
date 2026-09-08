@@ -1,10 +1,16 @@
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from 'next-themes';
 import { ThemeToggle } from './ThemeToggle';
-//import LanguageSelector from './LanguageSelector'
 
 const basePath = '';
+
+// The store's own sections, so the flasher reads as another room of the same
+// house rather than a tool that happens to share a logo.
+const SITE_LINKS = [
+  { label: 'Shop', href: 'https://bitronics.store/collections/best-sellers' },
+  { label: 'Pool', href: 'https://pool.bitronics.store' },
+  { label: 'Wiki', href: 'https://bitronics.store/pages/knowledge-base' },
+  { label: 'Blog', href: 'https://bitronics.store/blogs/knowledge-base' },
+];
 
 interface HeaderProps {
   onOpenPanel: () => void;
@@ -12,65 +18,46 @@ interface HeaderProps {
 
 export default function Header({ onOpenPanel }: HeaderProps) {
   const { t } = useTranslation();
-  const { theme, setTheme } = useTheme();
 
   return (
-    <header className="h-20 flex items-center justify-between text-bitronics header-custom">
-      <div className="px-4 lg:px-6 flex items-center w-full max-w-screen-xl mx-auto">
-        {/* Left section */}
-        <div className="flex-1">
-          <a className="flex items-baseline " href="https://bitronics.store">
-            <img
-              src={
-                theme === 'dark'
-                  ? `${basePath}/pictures/bitronics-logo-dark.svg`
-                  : `${basePath}/pictures/bitronics-logo-light.svg`
-              }
-              alt="Bitroics logo"
-              style={{ width: '50%' }}
-            />
-          </a>
-        </div>
+    <header className="h-20 header-custom">
+      <div className="mx-auto flex h-full w-full max-w-screen-xl items-center px-4 lg:px-6">
+        {/* The BITRONICS + FLASHER lockup, the same shape the pool site uses */}
+        <a
+          href="https://bitronics.store"
+          className="flex flex-1 items-center gap-3 transition-opacity hover:opacity-80"
+        >
+          {/* The bar is always dark, so the wordmark is always the light one */}
+          <img
+            src={`${basePath}/pictures/bitronics-logo-dark.svg`}
+            alt="Bitronics"
+            className="h-7 w-auto"
+          />
+          <span className="brand-badge">Flasher</span>
+        </a>
 
-        {/* Middle section - centered */}
-        <div className="flex-1 flex justify-center">
-          <a
-            href="https://discord.com/invite/osmu"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:opacity-90 transition-opacity"
+        <nav className="hidden flex-1 items-center justify-center gap-7 md:flex">
+          {SITE_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-white/70 transition-colors hover:text-white"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex flex-1 items-center justify-end gap-4 sm:gap-5">
+          <button
+            onClick={onOpenPanel}
+            className="text-sm font-medium text-white/70 transition-colors hover:text-white"
           >
-            <img
-              src="https://dcbadge.limes.pink/api/server/3E8ca2dkcC"
-              alt="Discord Server"
-              className="h-6 discord-badge"
-            />
-          </a>
-        </div>
-
-        {/* Right section */}
-        <div className="flex-1 flex justify-end">
-          <nav className="flex items-center gap-4 sm:gap-6">
-            <button
-              className="text-sm font-medium hover:underline underline-offset-4"
-              onClick={onOpenPanel}
-            >
-              {t('hero.getStarted')}
-            </button>
-            <Link className="text-sm font-medium hover:underline underline-offset-4" href="#features">
-              {t('header.features')}
-            </Link>
-            <Link
-              className="text-sm font-medium hover:underline underline-offset-4"
-              href="https://bitronics.store/shop/"
-              target="__blank"
-            >
-              {t('header.shop')}
-            </Link>
-
-            {/* <LanguageSelector /> */}
-            <ThemeToggle />
-          </nav>
+            {t('header.instructions')}
+          </button>
+          <ThemeToggle />
         </div>
       </div>
     </header>

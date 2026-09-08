@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ComputerIcon, Download, Usb, Zap, Cpu, GitCompareIcon, RadioReceiver } from 'lucide-react';
+import { ComputerIcon, Download, Usb, Zap, Cpu, GitCompareIcon, RadioReceiver , Loader2, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { Button } from './ui/button';
 import { ESPLoader, Transport } from 'esptool-js';
 import { useTranslation } from 'react-i18next';
@@ -10,77 +10,14 @@ import InstructionPanel from './InstructionPanel';
 import DeviceModal from './DeviceModal';
 import Selector from './Selector';
 import device_data from './firmware_data.json';
+import { Board, DEVICE_SOURCES, DeviceSource, sourceFor } from '@/lib/devices';
+import { Chip, chipFromEsptool } from '@/lib/boards';
+import BoardPicker from './BoardPicker';
 
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 
 const basePath = '';
-
-type Firmware = { version: string; path: string };
-type Board = { name: string; file: string; supported_firmware: Firmware[] };
-
-// Every device is served the same way: a main manifest lists the versions, and
-// each version's manifest lists the boards that version was built for. The only
-// things that change from one device to the next are which boards belong to it
-// and how they are spelled on screen, so that is all this table holds. Adding a
-// device is adding a row.
-type DeviceSource = {
-  device: string; // name in firmware_data.json
-  slug: string; // folder under public/firmware
-  keepsConfiguration?: boolean; // ships a firmware-only image to flash at 0x10000
-  includes?: (board: string) => boolean; // one folder can serve more than one device
-  label?: Record<string, string>; // how the board is spelled in the selector
-  sort?: (a: Board, b: Board) => number;
-};
-
-const NERDMINER_ORIGINAL = 'NerdMinerV2 original board (T-Display-S3)';
-
-const DEVICE_SOURCES: DeviceSource[] = [
-  {
-    device: 'NerdMiner',
-    keepsConfiguration: true,
-    slug: 'nerdminer',
-    label: { NerdminerV2: NERDMINER_ORIGINAL },
-    // The original board goes first, the rest alphabetically.
-    sort: (a, b) =>
-      a.name === NERDMINER_ORIGINAL ? -1 : b.name === NERDMINER_ORIGINAL ? 1 : a.name.localeCompare(b.name),
-  },
-  {
-    device: 'Nerdaxe',
-    keepsConfiguration: true,
-    slug: 'nerdqaxe', // shares its folder with the NerdQAxe, same repository
-    includes: (board) => board.startsWith('NerdAxe'),
-    label: { NerdAxe: 'Ultra', NerdAxeGamma: 'Gamma' },
-  },
-  {
-    device: 'NerdQaxe',
-    keepsConfiguration: true,
-    slug: 'nerdqaxe',
-    includes: (board) => board.startsWith('NerdQAxe'),
-    label: { 'NerdQAxe++': '++ (4.8THs)', 'NerdQAxe+': '+ (2.4THs)' },
-  },
-  {
-    device: 'Bitaxe',
-    keepsConfiguration: true,
-    slug: 'bitaxe',
-    label: { Supra401: 'Supra 401', Gamma601: 'Gamma 601' },
-  },
-  {
-    device: 'NerdNos',
-    slug: 'nerdnos',
-  },
-  {
-    device: 'Seeder',
-    slug: 'seeder',
-    label: { TDisplay: 'TTGO T-Display', TDisplayS3: 'LilyGO T-Display-S3' },
-  },
-  {
-    device: 'NerdOctaxe',
-    keepsConfiguration: true,
-    slug: 'nerdoctaxe',
-    label: { NerdOctaxeGamma: 'Gamma' },
-  },
-];
 
 // The Bitronics signature: a white headline with exactly one word in gold.
 function Headline({ text }: { text: string }) {
@@ -106,6 +43,9 @@ export default function LandingHero() {
   const [isLogging, setIsLogging] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBoardPickerOpen, setIsBoardPickerOpen] = useState(false);
+  const [bannerFailed, setBannerFailed] = useState(false);
+  const [progress, setProgress] = useState<number | null>(null);
   const [isChromiumBased, setIsChromiumBased] = useState(true);
   const [keepConfiguration, setKeepConfiguration] = useState(false);
   const [customAPName, setCustomAPName] = useState(false);
@@ -236,6 +176,22 @@ export default function LandingHero() {
   };
   
   const device = getDeviceData();
+  const heroSource = sourceFor(selectedDevice);
+
+  // The state of play, worked out from what is already known rather than
+  // from reading the message back, which would not survive a translation.
+  const finished = status !== '' && status === t('status.completed');
+  const failed = status.startsWith(t('status.connectionFailed')) || status.startsWith('Error');
+  const statusKind = isFlashing || isConnecting ? 'busy' : failed ? 'error' : finished ? 'done' : status ? 'info' : null;
+
+  // Finishing a flash and being told nothing is the worst part of the old
+  // flow: the device has just rebooted into something and you are on your own.
+  const nextStep = !finished
+    ? null
+    : heroSource?.category === 'tools'
+      ? 'Unplug it and plug it back in. To check the chip really holds this build, run the verify command from the project README.'
+      : 'Unplug it and plug it back in. It will come up as its own WiFi access point: join that to set your pool and wallet.';
+  const banner = !bannerFailed && heroSource?.banner ? `${basePath}${heroSource.banner}` : null;
   const board =
     selectedBoardVersion !== ''
       ? device.boards.find((b) => b.name == selectedBoardVersion)!
@@ -244,6 +200,46 @@ export default function LandingHero() {
     selectedFirmware !== ''
       ? board.supported_firmware.find((f: any) => f.version == selectedFirmware)!
       : { path: '' };
+
+  // Ask the chip what it is, so a device with more boards than anyone can
+  // scan can narrow itself down. Reuses the open port when there is one and
+  // gives it back untouched; otherwise it borrows one and hands it back.
+  const detectChip = async (): Promise<Chip | null> => {
+    const existing = serialPortRef.current;
+    const port = existing ?? (await navigator.serial.requestPort());
+
+    if (!existing) {
+      await port.open({
+        baudRate: 115200,
+        dataBits: 8,
+        stopBits: 1,
+        parity: 'none',
+        flowControl: 'none',
+      });
+    } else if (isLogging) {
+      // esptool needs the raw streams, so stop reading them first
+      await stopSerialLogging();
+    }
+
+    const transport = new Transport(port);
+    const loader = new ESPLoader({
+      transport,
+      baudrate: 115200,
+      romBaudrate: 115200,
+      terminal: { clean() {}, writeLine() {}, write() {} },
+    });
+
+    try {
+      const described = await loader.main();
+      return chipFromEsptool(loader.chip?.CHIP_NAME ?? described ?? '');
+    } finally {
+      if (existing) {
+        serialPortRef.current = port; // the user opened it on purpose, leave it
+      } else {
+        await transport.disconnect().catch(() => {});
+      }
+    }
+  };
 
   const handleConnect = async () => {
     setIsConnecting(true);
@@ -793,7 +789,7 @@ export default function LandingHero() {
       let firmwarePath: string;
       let flashAddress: number;
 
-      const source = DEVICE_SOURCES.find((s) => s.device === selectedDevice);
+      const source = sourceFor(selectedDevice);
       const boardFile = (board as Board).file;
 
       if (source && boardFile) {
@@ -833,6 +829,7 @@ export default function LandingHero() {
         compress: true,
         reportProgress: (fileIndex, written, total) => {
           const percent = Math.round((written / total) * 100);
+          setProgress(percent);
           if (percent == 100) {
             setStatus(t('status.completed'));
           } else {
@@ -886,6 +883,7 @@ export default function LandingHero() {
     // leaving it ticked from a previous device would quietly ask for a file
     // that does not exist.
     setKeepConfiguration(false);
+    setBannerFailed(false);
     setIsModalOpen(false);
     
     // Change background for Nerdminer
@@ -920,20 +918,40 @@ export default function LandingHero() {
       <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center gap-8">
-            <div className="space-y-2 mb-14">
-              <h1 className="font-display text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                <Headline
-                  text={
-                    selectedDevice === 'NerdMiner'
-                      ? 'Flash, play and learn with NerdMiner'
-                      : t('hero.title')
-                  }
+            {banner ? (
+              <div className="relative mb-14 w-full overflow-hidden rounded-2xl border border-[var(--color-hairline)]">
+                <img
+                  src={banner}
+                  alt=""
+                  onError={() => setBannerFailed(true)}
+                  className="h-[220px] w-full object-cover object-right md:h-[300px]"
                 />
-              </h1>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                {t('hero.description')}
-              </p>
-            </div>
+                <div className="absolute inset-0 flex items-center bg-gradient-to-r from-black via-black/80 to-transparent px-6 text-left md:px-12">
+                  <div className="max-w-md">
+                    <p className="brand-kicker">{heroSource?.tagline ?? selectedDevice}</p>
+                    <h1 className="font-display mt-1 text-3xl font-bold tracking-tighter text-white sm:text-4xl md:text-5xl">
+                      {selectedDevice}
+                    </h1>
+                    <p className="mt-2 text-sm text-white/60 md:text-base">{t('hero.description')}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 mb-14">
+                <h1 className="font-display text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                  <Headline
+                    text={
+                      selectedDevice === 'NerdMiner'
+                        ? 'Flash, play and learn with NerdMiner'
+                        : t('hero.title')
+                    }
+                  />
+                </h1>
+                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                  {t('hero.description')}
+                </p>
+              </div>
+            )}
             <div className="flex flex-col justify-between items-center w-3/4 gap-y-20 md:flex-row">
               <div className="flex flex-col justify-center w-52">
                 {selectedDevice === '' ? (
@@ -959,15 +977,12 @@ export default function LandingHero() {
                   color="#6B7280"
                   strokeWidth={1}
                 />
-                <Selector
-                  placeholder={t('hero.selectBoard')}
-                  values={device.boards.map((b) => b.name)}
-                  onValueChange={(value) => {
-                    setSelectedBoardVersion(value);
-                    setSelectedFirmware('');
-                  }}
+                <Button
+                  onClick={() => setIsBoardPickerOpen(true)}
                   disabled={isConnecting || isFlashing || selectedDevice === ''}
-                />
+                >
+                  {selectedBoardVersion === '' ? t('hero.selectBoard') : selectedBoardVersion}
+                </Button>
               </div>
               <div className="flex flex-col justify-center w-52">
                 <GitCompareIcon
@@ -987,7 +1002,7 @@ export default function LandingHero() {
             </div>
             
             {/* Only for devices that publish a firmware-only image */}
-            {DEVICE_SOURCES.find((s) => s.device === selectedDevice)?.keepsConfiguration && (
+            {sourceFor(selectedDevice)?.keepsConfiguration && (
               <div className="flex flex-col items-center space-y-4 justify-center">
                 <div className="flex items-center space-x-2 justify-center">
                   <input
@@ -1081,7 +1096,43 @@ export default function LandingHero() {
               <p className="mx-auto max-w-[400px] text-gray-500 md:text-m dark:text-gray-400">
                 {t('hero.loggingDescription')}
               </p>
-              {status && <p className="mt-2 text-sm font-medium">{status}</p>}
+              {statusKind && (
+                <div
+                  className={`mx-auto mt-6 w-full max-w-md rounded-xl border p-4 text-left ${
+                    statusKind === 'error'
+                      ? 'border-[var(--color-danger)]/40 bg-[var(--color-danger)]/10'
+                      : statusKind === 'done'
+                        ? 'border-[var(--color-success)]/40 bg-[var(--color-success)]/10'
+                        : 'border-[var(--color-hairline)] bg-[var(--color-surface)]'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    {statusKind === 'busy' && (
+                      <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-[var(--color-bitronics)]" />
+                    )}
+                    {statusKind === 'done' && (
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-success)]" />
+                    )}
+                    {statusKind === 'error' && (
+                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-danger)]" />
+                    )}
+                    <p className="text-sm font-medium leading-snug">{status}</p>
+                  </div>
+
+                  {isFlashing && progress !== null && (
+                    <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-[var(--color-bitronics)] transition-all duration-200"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  )}
+
+                  {nextStep && (
+                    <p className="mt-2.5 text-xs leading-relaxed text-white/50">{nextStep}</p>
+                  )}
+                </div>
+              )}
             </div>
             {isLogging && (
               <div
@@ -1097,6 +1148,19 @@ export default function LandingHero() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         selectDevice={(name: string) => selectDevice(name)}
+      />
+      <BoardPicker
+        isOpen={isBoardPickerOpen}
+        onClose={() => setIsBoardPickerOpen(false)}
+        source={sourceFor(selectedDevice)}
+        boards={device.boards as Board[]}
+        selected={selectedBoardVersion}
+        onSelect={(board) => {
+          setSelectedBoardVersion(board);
+          setSelectedFirmware('');
+          setIsBoardPickerOpen(false);
+        }}
+        onDetect={sourceFor(selectedDevice)?.detectChip ? detectChip : undefined}
       />
     </>
   );
