@@ -3,6 +3,7 @@
 import Footer from '@/components/Footer'
 import LandingHero from '@/components/LandingHero'
 import Features from '@/components/Features'
+import Releases from '@/components/Releases'
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <main className="flex-1">
         <LandingHero />
         <Features />
+        <Releases />
       </main>
       <Footer />
     </div>

@@ -1,0 +1,97 @@
+{
+  "generatedAt": "2026-09-08T01:06:42.568Z",
+  "projects": [
+    {
+      "name": "Bitaxe",
+      "repo": "bitaxeorg/ESP-Miner",
+      "url": "https://github.com/bitaxeorg/ESP-Miner/releases",
+      "releases": [
+        {
+          "tag": "v2.15.2rc0",
+          "name": "v2.15.2rc0",
+          "published": "2026-08-29T21:03:08Z",
+          "prerelease": true,
+          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.2rc0",
+          "summary": "This is a release candidate version and might have some issues. It's not ment to be for stability but for testing · Add BM1372/BM1373 ASIC driver support by @benjamin-wilson in https://github.com/bitaxeorg/ESP-Miner/pull/1890 · Adapt downlo"
+        },
+        {
+          "tag": "v2.15.1",
+          "name": "v2.15.1",
+          "published": "2026-08-29T10:57:02Z",
+          "prerelease": false,
+          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.1",
+          "summary": "Bug Fixes · Adapt download assets message in update page by @tassoneroberto in #1907 · Fix swarm ips by @WantClue in #1905"
+        }
+      ]
+    },
+    {
+      "name": "NerdQaxe & Octaxe",
+      "repo": "shufps/ESP-Miner-NerdQAxePlus",
+      "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
+      "releases": [
+        {
+          "tag": "v1.1.1-test1",
+          "name": "v1.1.1-test1",
+          "published": "2026-09-06T08:06:29Z",
+          "prerelease": true,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-test1",
+          "summary": "testing #695"
+        },
+        {
+          "tag": "v1.1.0",
+          "name": "v1.1.0",
+          "published": "2026-08-29T07:50:55Z",
+          "prerelease": false,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.0",
+          "summary": "V1.1.0 · New boards — the Q1373 and NerdQAxe++ rev7 · This release brings first-class support for a new board, carried here under the internal working title Q1373 — the final board name isn't decided yet. It's a real step up: it mines on Bi"
+        }
+      ]
+    },
+    {
+      "name": "NerdMiner",
+      "repo": "BitMaker-hub/NerdMiner_v2",
+      "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases",
+      "releases": [
+        {
+          "tag": "nerdminer-release-V1.8.3",
+          "name": "nerdminer-release-V1.8.3",
+          "published": "2025-09-13T02:06:12Z",
+          "prerelease": false,
+          "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/tag/nerdminer-release-V1.8.3",
+          "summary": "fix bitcoin price update by @BitMaker-hub in https://github.com/BitMaker-hub/NerdMiner_v2/pull/677 · Prerelease by @BitMaker-hub in https://github.com/BitMaker-hub/NerdMiner_v2/pull/678 · fixes & improvements by @BitMaker-hub in https://git"
+        },
+        {
+          "tag": "nerdminer-prerelease-V1.8.3",
+          "name": "nerdminer-prerelease-V1.8.3",
+          "published": "2025-09-12T22:28:21Z",
+          "prerelease": true,
+          "url": "https://github.com/BitMaker-hub/NerdMiner_v2/releases/tag/nerdminer-prerelease-V1.8.3",
+          "summary": "fix bitcoin price update by @BitMaker-hub in https://github.com/BitMaker-hub/NerdMiner_v2/pull/677 · fixes & improvements by @BitMaker-hub in https://github.com/BitMaker-hub/NerdMiner_v2/pull/683"
+        }
+      ]
+    },
+    {
+      "name": "Seeder",
+      "repo": "BitMaker-hub/Seeder",
+      "url": "https://github.com/BitMaker-hub/Seeder/releases",
+      "releases": [
+        {
+          "tag": "v2.1.0",
+          "name": "v2.1.0",
+          "published": "2026-09-07T23:01:16Z",
+          "prerelease": false,
+          "url": "https://github.com/BitMaker-hub/Seeder/releases/tag/v2.1.0",
+          "summary": ""
+        },
+        {
+          "tag": "v2.0.0",
+          "name": "v2.0.0",
+          "published": "2026-08-30T23:16:13Z",
+          "prerelease": false,
+          "url": "https://github.com/BitMaker-hub/Seeder/releases/tag/v2.0.0",
+          "summary": ""
+        }
+      ]
+    }
+  ]
+}

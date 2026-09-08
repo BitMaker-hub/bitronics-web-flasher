@@ -125,6 +125,17 @@ const FIRMWARE_REPOS = {
   }
 };
 
+// The changelog shown on the site. Collected here, on the daily run, rather
+// than from every visitor's browser: GitHub allows sixty unauthenticated calls
+// an hour per address, and the page should not go blank because somebody else
+// on the same network used them up.
+const FOLLOWED_PROJECTS = [
+  { name: 'Bitaxe', owner: 'bitaxeorg', repo: 'ESP-Miner' },
+  { name: 'NerdQaxe & Octaxe', owner: 'shufps', repo: 'ESP-Miner-NerdQAxePlus' },
+  { name: 'NerdMiner', owner: 'BitMaker-hub', repo: 'NerdMiner_v2' },
+  { name: 'Seeder', owner: 'BitMaker-hub', repo: 'Seeder' },
+];
+
 class FirmwareUpdater {
   constructor() {
     this.hasChanges = false;
@@ -452,6 +463,85 @@ class FirmwareUpdater {
     }
   }
 
+  // A release note trimmed to something that fits a card. The full text is one
+  // click away, so this only has to say enough to decide whether to go and read it.
+  summarise(body) {
+    if (!body) return '';
+
+    // Headings, list bullets and quote marks carry no meaning once the text is
+    // one line, and "What's Changed" is the same sentence on every release.
+    const noise = /^(what'?s changed|full changelog|new contributors)\b/i;
+
+    return body
+      .replace(/\r/g, '')
+      .replace(/\[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/gi, '')
+      .split('\n')
+      .map((line) => line.replace(/^[#>*\-\s]+/, '').trim())
+      .filter(
+        (line) =>
+          line.length > 0 && line[0] !== '!' && !line.startsWith('```') && !noise.test(line)
+      )
+      .slice(0, 3)
+      .join(' · ')
+      .slice(0, 240);
+  }
+
+  async writeReleaseFeed() {
+    console.log('\n📰 Collecting release notes...');
+    const projects = [];
+
+    for (const project of FOLLOWED_PROJECTS) {
+      try {
+        const { data } = await axios.get(
+          `https://api.github.com/repos/${project.owner}/${project.repo}/releases?per_page=5`
+        );
+
+        const releases = data
+          .filter((release) => !release.draft)
+          .slice(0, 2)
+          .map((release) => ({
+            tag: release.tag_name,
+            name: release.name || release.tag_name,
+            published: release.published_at,
+            prerelease: release.prerelease,
+            url: release.html_url,
+            summary: this.summarise(release.body),
+          }));
+
+        projects.push({
+          name: project.name,
+          repo: `${project.owner}/${project.repo}`,
+          url: `https://github.com/${project.owner}/${project.repo}/releases`,
+          releases,
+        });
+        console.log(`   ${project.name}: ${releases.length} release(s)`);
+      } catch (error) {
+        console.log(`⚠️  Could not read releases for ${project.name}: ${error.message}`);
+      }
+    }
+
+    // Never replace a good feed with an empty one because GitHub had a bad minute.
+    if (projects.length === 0) return;
+
+    const feedPath = 'public/releases.json';
+    let previous = null;
+    try {
+      previous = JSON.parse(await fs.readFile(feedPath, 'utf8'));
+    } catch (error) {
+      // there is no feed yet
+    }
+
+    // The timestamp moving on its own is not a change worth committing.
+    if (previous && JSON.stringify(previous.projects) === JSON.stringify(projects)) return;
+
+    await fs.writeFile(
+      feedPath,
+      JSON.stringify({ generatedAt: new Date().toISOString(), projects }, null, 2)
+    );
+    console.log('📝 Updated public/releases.json');
+    this.hasChanges = true;
+  }
+
   async run() {
     console.log('🤖 Starting firmware update check...');
     
@@ -461,12 +551,13 @@ class FirmwareUpdater {
 
     // Prune every device, including the ones nobody automates, so a folder
     // filled in by hand cannot push the site back over the limit.
-    console.log(`
-🧹 Keeping the last ${VERSIONS_KEPT} versions of each device...`);
+    console.log(`\n🧹 Keeping the last ${VERSIONS_KEPT} versions of each device...`);
     const root = 'public/firmware';
     for (const entry of await fs.readdir(root, { withFileTypes: true })) {
       if (entry.isDirectory()) await this.pruneOldVersions(path.join(root, entry.name));
     }
+
+    await this.writeReleaseFeed();
 
     console.log(`\n✨ Update check completed. Changes: ${this.hasChanges ? 'Yes' : 'No'}`);
   }
