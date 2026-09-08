@@ -979,11 +979,11 @@ export default function LandingHero() {
                 </p>
               </div>
             ) : (
-              <div className="mb-8 flex items-center justify-center gap-3">
+              <div className="mb-9 space-y-1">
                 <p className="brand-kicker">
                   {heroSource?.intro?.kicker ?? heroSource?.tagline ?? selectedDevice}
                 </p>
-                <h1 className="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                <h1 className="font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
                   {selectedDevice}
                 </h1>
               </div>

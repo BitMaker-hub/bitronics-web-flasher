@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { ThemeToggle } from './ThemeToggle';
 
 const basePath = '';
 
@@ -57,7 +56,6 @@ export default function Header({ onOpenPanel }: HeaderProps) {
           >
             {t('header.instructions')}
           </button>
-          <ThemeToggle />
         </div>
       </div>
     </header>
