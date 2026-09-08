@@ -1,5 +1,68 @@
 @import 'tailwindcss';
 
+/* --------------------------------------------------------------------------
+   Typefaces, served from this repository rather than fetched from Google.
+   The store theme made the same call for the same reasons: no third party in
+   the page load, and no client IP handed to one. There is a build-time reason
+   too — next/font/google downloads at build, so a bad minute on fonts.gstatic
+   fails the deploy, which is exactly how this arrived.
+
+   Space Grotesk and M PLUS 1 Code are the same files the store ships.
+   -------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk.woff2') format('woff2-variations'),
+       url('/fonts/SpaceGrotesk.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'M PLUS 1 Code';
+  src: url('/fonts/MPLUS1Code.woff2') format('woff2-variations'),
+       url('/fonts/MPLUS1Code.woff2') format('woff2');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter comes in three slices. The unicode ranges matter: this site is
+   translated into nine languages, and without them Russian, Turkish, Romanian
+   and Slovak would drop to whatever the system happens to have. */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-latin-ext.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-cyrillic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+
 @plugin 'tailwindcss-animate';
 
 /* Custom scrollbar styles for select components */
@@ -204,6 +267,10 @@
     @apply text-foreground;
     min-height: 100vh;
     transition: background-image 0.3s ease;
+    /* next/font used to put this on the body element; now it is said here */
+    font-family:
+      'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+      Arial, sans-serif;
   }
 }
 
@@ -359,12 +426,11 @@ body {
 
 /* Headlines in Space Grotesk, data in M PLUS 1 Code. */
 .font-display {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  letter-spacing: -0.5px;
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 }
 
 .font-data {
-  font-family: var(--font-data), ui-monospace, SFMono-Regular, monospace;
+  font-family: 'M PLUS 1 Code', ui-monospace, SFMono-Regular, monospace;
   font-feature-settings: 'tnum' 1;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
@@ -372,7 +438,7 @@ body {
 
 /* Small mono kicker with a dash, the house signature */
 .brand-kicker {
-  font-family: var(--font-data), ui-monospace, SFMono-Regular, monospace;
+  font-family: 'M PLUS 1 Code', ui-monospace, SFMono-Regular, monospace;
   font-weight: 500;
   font-size: 12px;
   letter-spacing: 0.06em;
@@ -386,7 +452,7 @@ body {
 
 /* The BITRONICS + FLASHER lockup, the same shape as the POOL badge */
 .brand-badge {
-  font-family: var(--font-data), ui-monospace, SFMono-Regular, monospace;
+  font-family: 'M PLUS 1 Code', ui-monospace, SFMono-Regular, monospace;
   background: var(--color-bitronics);
   color: var(--color-gold-ink);
   font-weight: 700;

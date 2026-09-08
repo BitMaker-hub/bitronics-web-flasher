@@ -1,15 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk, M_PLUS_1_Code } from 'next/font/google';
 import './globals.css';
 import { ClientThemeWrapper } from '../components/ClientThemeWrapper';
 import { I18nProvider } from '../components/I18nProvider';
 
-const inter = Inter({ subsets: ['latin'] });
-
-// Bitronics uses Space Grotesk for headlines and M PLUS 1 Code for anything
-// numeric: firmware versions, hashes, board revisions.
-const display = Space_Grotesk({ subsets: ['latin'], weight: ['600', '700'], variable: '--font-display' });
-const data = M_PLUS_1_Code({ subsets: ['latin'], weight: ['500', '700'], variable: '--font-data' });
+// The typefaces are declared as @font-face in globals.css and served out of
+// public/fonts. next/font/google fetches them at build time instead, which makes
+// every deploy depend on fonts.gstatic.com answering — and one day it did not.
 
 export const metadata: Metadata = {
   title: 'Bitronics flasher',
@@ -30,7 +26,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} ${display.variable} ${data.variable}`}>
+      <body>
         <ClientThemeWrapper>
           <I18nProvider>
             <div className="min-h-screen text-foreground">
