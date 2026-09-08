@@ -905,7 +905,7 @@ export default function LandingHero() {
         <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none mb-4">
           {t('errors.browserCompatibility.title')}
         </h1>
-        <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+        <p className="mx-auto max-w-[700px] text-white/60 md:text-xl">
           {t('errors.browserCompatibility.description')}
         </p>
       </div>
@@ -915,7 +915,10 @@ export default function LandingHero() {
   return (
     <>
       <Header onOpenPanel={() => setIsPanelOpen(true)} />
-      <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+      {/* The hero always sits on a dark photograph, whatever the page theme is
+          set to, so its contents always render in the dark palette. Without
+          this the headline turns near-black on a near-black background. */}
+      <section className="dark w-full py-12 text-white md:py-24 lg:py-32 xl:py-48">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center gap-8">
             {banner ? (
@@ -938,7 +941,7 @@ export default function LandingHero() {
               </div>
             ) : (
               <div className="space-y-2 mb-14">
-                <h1 className="font-display text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                <h1 className="font-display text-3xl font-bold tracking-tighter text-white sm:text-4xl md:text-5xl lg:text-6xl/none">
                   <Headline
                     text={
                       selectedDevice === 'NerdMiner'
@@ -947,7 +950,7 @@ export default function LandingHero() {
                     }
                   />
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+                <p className="mx-auto max-w-[700px] text-white/60 md:text-xl">
                   {t('hero.description')}
                 </p>
               </div>
@@ -1093,7 +1096,7 @@ export default function LandingHero() {
                   <Download className="ml-2 h-4 w-4" />
                 </Button>
               </div>
-              <p className="mx-auto max-w-[400px] text-gray-500 md:text-m dark:text-gray-400">
+              <p className="mx-auto max-w-[400px] text-white/50 md:text-m">
                 {t('hero.loggingDescription')}
               </p>
               {statusKind && (
@@ -1116,7 +1119,7 @@ export default function LandingHero() {
                     {statusKind === 'error' && (
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-danger)]" />
                     )}
-                    <p className="text-sm font-medium leading-snug">{status}</p>
+                    <p className="text-sm font-medium leading-snug text-white">{status}</p>
                   </div>
 
                   {isFlashing && progress !== null && (
