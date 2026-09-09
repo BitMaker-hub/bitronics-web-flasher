@@ -1,0 +1,11 @@
+{
+  "version": "v2.1.1",
+  "boards": [
+    "TDisplay",
+    "TDisplayS3"
+  ],
+  "sha256": {
+    "TDisplay": "9862e069d85514b1323a781c94154337245daaaad7482e018ae2aa4cfe9c7046",
+    "TDisplayS3": "f4dc0796223ea2ce3b647897f8c2b21b97b3eecb575098e56cebd562dea8cf05"
+  }
+}
