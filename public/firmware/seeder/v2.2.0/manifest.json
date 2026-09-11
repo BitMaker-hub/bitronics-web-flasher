@@ -1,0 +1,19 @@
+{
+  "version": "v2.2.0",
+  "boards": [
+    "TDisplay",
+    "TDisplayS3"
+  ],
+  "sha256": {
+    "TDisplay": "d10005ec274f33dafbad3e4afc4c0e587d9bd067cea1ce2ef6931d472d5ffc63",
+    "TDisplayS3": "13e460f9e1e92e7d95e394f69e34653b91e8fa811e1aa1d4db141b3ef3de09aa"
+  },
+  "upstream": {
+    "repo": "BitMaker-hub/Seeder",
+    "tag": "v2.2.0",
+    "assets": {
+      "TDisplay": "seeder-tdisplay-merged.bin",
+      "TDisplayS3": "seeder-tdisplay-s3-merged.bin"
+    }
+  }
+}
