@@ -100,6 +100,12 @@ const FIRMWARE_REPOS = {
     owner: 'BitMaker-hub',
     repo: 'Seeder',
     firmwarePath: 'public/firmware/seeder',
+    // Write down which release asset each image is, so the page can check the
+    // hash against the one GitHub records for it and say "Verified" — not
+    // only against the hash this script computed. Without it the page can
+    // only ever say "Checksum matches". The Seeder is the one device where
+    // verified is a promise; the NerdMiner stays out on purpose.
+    crossCheck: true,
     devices: [
       {
         name: 'TDisplay',
@@ -200,7 +206,7 @@ class FirmwareUpdater {
     }
   }
 
-  async createManifest(versionPath, version, boards = ['NerdQAxe']) {
+  async createManifest(versionPath, version, boards = ['NerdQAxe'], upstream) {
     const manifestPath = path.join(versionPath, 'manifest.json');
 
     // Record what each factory image hashes to. It costs nothing here and it
@@ -217,6 +223,7 @@ class FirmwareUpdater {
     }
 
     const manifest = { version: version, boards: boards, sha256: sha256 };
+    if (upstream) manifest.upstream = upstream;
 
     await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2));
     console.log(`📝 Created manifest at ${manifestPath}`);
@@ -402,6 +409,7 @@ class FirmwareUpdater {
     // Create version directory
     const versionDir = path.join(config.firmwarePath, newVersion);
     let downloadedDevices = [];
+    const assetNames = {};
 
     // Process each device in the configuration
     for (const device of devices) {
@@ -452,12 +460,17 @@ class FirmwareUpdater {
       }
 
       downloadedDevices.push(device.name);
+      assetNames[device.name] = factoryAsset.name;
       console.log(`✅ Successfully downloaded ${device.name} factory and firmware`);
     }
 
     if (downloadedDevices.length > 0) {
+      const upstream = config.crossCheck
+        ? { repo: `${config.owner}/${config.repo}`, tag: release.tag_name, assets: assetNames }
+        : undefined;
+
       // Create manifest with all successfully downloaded devices
-      await this.createManifest(versionDir, newVersion, downloadedDevices);
+      await this.createManifest(versionDir, newVersion, downloadedDevices, upstream);
       
       // Update main repository manifest
       await this.updateMainManifest(config.firmwarePath, newVersion, downloadedDevices, config);

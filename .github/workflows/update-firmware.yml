@@ -44,6 +44,10 @@ jobs:
         git config --local user.name "GitHub Action"
         git add public/firmware/
         git add src/components/firmware_data.json
+        # The changelog the site shows under "Stay updated". The script wrote
+        # it on every run from the start, but it was never added here, so the
+        # page kept serving whatever was committed by hand.
+        git add public/releases.json
         TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
         git commit -m "🤖 Auto-update firmware releases
 
