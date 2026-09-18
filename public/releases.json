@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-11T12:22:00.514Z",
+  "generatedAt": "2026-09-18T06:56:07.639Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -17,12 +17,12 @@
           "summary": "This is a release candidate version and might have some issues. It's not ment to be for stability but for testing · Add BM1372/BM1373 ASIC driver support by @benjamin-wilson in https://github.com/bitaxeorg/ESP-Miner/pull/1890 · Adapt downlo"
         },
         {
-          "tag": "v2.15.1",
-          "name": "v2.15.1",
-          "published": "2026-08-29T10:57:02Z",
-          "prerelease": false,
-          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.1",
-          "summary": "Bug Fixes · Adapt download assets message in update page by @tassoneroberto in #1907 · Fix swarm ips by @WantClue in #1905"
+          "tag": "v2.15.2",
+          "name": "v2.15.2",
+          "published": "2026-09-18T06:20:56Z",
+          "prerelease": true,
+          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.2",
+          "summary": "Add BM1372/BM1373 ASIC driver support by @benjamin-wilson in https://github.com/bitaxeorg/ESP-Miner/pull/1890 · Adapt download assets message in update page by @tassoneroberto in https://github.com/bitaxeorg/ESP-Miner/pull/1907 · Fix swarm "
         }
       ]
     },
