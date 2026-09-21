@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T06:56:07.639Z",
+  "generatedAt": "2026-09-21T07:29:50.158Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -9,12 +9,12 @@
       "url": "https://github.com/bitaxeorg/ESP-Miner/releases",
       "releases": [
         {
-          "tag": "v2.15.2rc0",
-          "name": "v2.15.2rc0",
-          "published": "2026-08-29T21:03:08Z",
+          "tag": "v2.15.3",
+          "name": "v2.15.3",
+          "published": "2026-09-20T15:57:20Z",
           "prerelease": true,
-          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.2rc0",
-          "summary": "This is a release candidate version and might have some issues. It's not ment to be for stability but for testing · Add BM1372/BM1373 ASIC driver support by @benjamin-wilson in https://github.com/bitaxeorg/ESP-Miner/pull/1890 · Adapt downlo"
+          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.3",
+          "summary": "fix(axe-os): derive low-frequency warnings from device presets by @vortexopenclaw in #1961 · @vortexopenclaw made their first contribution in #1961"
         },
         {
           "tag": "v2.15.2",
@@ -22,7 +22,7 @@
           "published": "2026-09-18T06:20:56Z",
           "prerelease": true,
           "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.2",
-          "summary": "Add BM1372/BM1373 ASIC driver support by @benjamin-wilson in https://github.com/bitaxeorg/ESP-Miner/pull/1890 · Adapt download assets message in update page by @tassoneroberto in https://github.com/bitaxeorg/ESP-Miner/pull/1907 · Fix swarm "
+          "summary": "fix: prevent reconnect storms from slow clients by @r3mko in https://github.com/bitaxeorg/ESP-Miner/pull/1913 · Add BM1372/BM1373 ASIC driver support by @benjamin-wilson in https://github.com/bitaxeorg/ESP-Miner/pull/1890 · Bitaxe Color: Na"
         }
       ]
     },
