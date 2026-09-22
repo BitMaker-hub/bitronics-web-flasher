@@ -31,6 +31,9 @@ const CHIP_OVERRIDES: Record<string, Chip> = {
   gamma601: 'ESP32-S3',
   nerdaxe: 'ESP32-S3',
   nerdaxegamma: 'ESP32-S3',
+  // Read out of its own factory image: chip_id 9, and the bootloader sits at
+  // 0x0 rather than 0x1000.
+  nerdaxegaia: 'ESP32-S3',
   'nerdqaxe+': 'ESP32-S3',
   'nerdqaxe++': 'ESP32-S3',
   nerdoctaxegamma: 'ESP32-S3',

@@ -1,0 +1,9 @@
+{
+  "version": "v1.1.1",
+  "boards": [
+    "NerdAxeGaia"
+  ],
+  "sha256": {
+    "NerdAxeGaia": "68c2abdbbf319763744e47955badbc465e674f41ddecf5afc3201376b07eb5a5"
+  }
+}

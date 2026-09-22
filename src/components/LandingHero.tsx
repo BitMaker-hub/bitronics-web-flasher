@@ -32,6 +32,10 @@ import '@xterm/xterm/css/xterm.css';
 
 const basePath = '';
 
+/** The image to write: the factory one, or the firmware-only build beside it. */
+const imageFor = (factoryPath: string, keeping: boolean) =>
+  keeping ? factoryPath.replace(/_factory\.bin$/, '_firmware.bin') : factoryPath;
+
 // The Bitronics signature: a white headline with exactly one word in gold.
 function Headline({ text }: { text: string }) {
   const words = text.trim().split(' ');
@@ -81,29 +85,28 @@ export default function LandingHero() {
 
   // One loader for every device: read the main manifest for the versions, then
   // each version's manifest for the boards it was built for.
-  const loadBoards = async (source: DeviceSource): Promise<Board[]> => {
+  // One folder's worth of boards, added to whatever has been collected already.
+  const loadFolder = async (source: DeviceSource, slug: string, boards: Map<string, Board>) => {
     // The main manifest is the only source of versions. It comes from this same
     // site, so if it cannot be read then neither can the per-version manifests
     // and there is nothing sensible to fall back to.
     let versions: string[] = [];
 
     try {
-      const response = await fetch(`${basePath}/firmware/${source.slug}/manifest.json`);
+      const response = await fetch(`${basePath}/firmware/${slug}/manifest.json`);
       if (response.ok) {
         versions = (await response.json()).versions || [];
       } else {
-        console.warn(`No manifest for ${source.slug}: it will have no versions to offer`);
+        console.warn(`No manifest for ${slug}: it will have no versions to offer`);
       }
     } catch (error) {
-      console.warn(`Could not read the ${source.slug} manifest:`, error);
+      console.warn(`Could not read the ${slug} manifest:`, error);
     }
-
-    const boards = new Map<string, Board>();
 
     for (const version of versions) {
       try {
         const response = await fetch(
-          `${basePath}/firmware/${source.slug}/${version}/manifest.json`,
+          `${basePath}/firmware/${slug}/${version}/manifest.json`,
         );
         if (!response.ok) continue;
 
@@ -124,7 +127,7 @@ export default function LandingHero() {
           // Newest first, because the versions arrive in that order.
           boards.get(displayName)!.supported_firmware.push({
             version: version,
-            path: `${basePath}/firmware/${source.slug}/${version}/${boardName}_factory.bin`,
+            path: `${basePath}/firmware/${slug}/${version}/${boardName}_factory.bin`,
             sha256: manifest.sha256?.[boardName],
             // Set by hand on a version kept for a reason, so the list says so
             // instead of leaving an old build looking like an oversight.
@@ -136,8 +139,19 @@ export default function LandingHero() {
           });
         }
       } catch (error) {
-        console.error(`Error loading the ${source.slug} manifest for ${version}:`, error);
+        console.error(`Error loading the ${slug} manifest for ${version}:`, error);
       }
+    }
+
+  };
+
+  const loadBoards = async (source: DeviceSource): Promise<Board[]> => {
+    const boards = new Map<string, Board>();
+
+    // A device is usually one folder. The ones we build ourselves keep their
+    // own, so a board can join the list from somewhere else entirely.
+    for (const folder of [source.slug, ...(source.also ?? [])]) {
+      await loadFolder(source, folder, boards);
     }
 
     const loaded = Array.from(boards.values());
@@ -241,17 +255,14 @@ export default function LandingHero() {
       ? board.supported_firmware.find((f: any) => f.version == selectedFirmware)!
       : { path: '' };
 
-  // The image that will actually be written: the factory one, unless the user
-  // asked to keep their configuration, in which case it is the firmware-only
-  // build — which has no recorded hash, so there is nothing to check it against.
-  const plannedPath =
-    selectedFirmware !== '' && (board as Board).file && sourceFor(selectedDevice)
-      ? `${basePath}/firmware/${sourceFor(selectedDevice)!.slug}/${selectedFirmware}/${(board as Board).file}_${
-          keepConfiguration && sourceFor(selectedDevice)!.keepsConfiguration
-            ? 'firmware'
-            : 'factory'
-        }.bin`
-      : null;
+  // Keeping the configuration writes the firmware-only build instead, which
+  // carries no recorded hash, so there is nothing to check it against.
+  const keeping = keepConfiguration && sourceFor(selectedDevice)?.keepsConfiguration === true;
+
+  // The image that will actually be written. It comes off the path the board
+  // arrived with rather than being rebuilt from the device's folder, because
+  // that path is the only thing that knows which folder this board came from.
+  const plannedPath = firmware.path ? imageFor(firmware.path, keeping) : null;
 
   // Check on selection rather than at flash time, so the answer is on screen
   // before anyone commits to writing anything. The bytes are kept for the
@@ -946,18 +957,8 @@ export default function LandingHero() {
       let firmwarePath: string;
       let flashAddress: number;
 
-      const source = sourceFor(selectedDevice);
-      const boardFile = (board as Board).file;
-
-      if (source && boardFile) {
-        const keeping = keepConfiguration && source.keepsConfiguration === true;
-        const image = keeping ? 'firmware' : 'factory';
-        firmwarePath = `${basePath}/firmware/${source.slug}/${selectedFirmware}/${boardFile}_${image}.bin`;
-        flashAddress = keeping ? 0x10000 : 0x0000;
-      } else {
-        firmwarePath = firmware.path;
-        flashAddress = 0;
-      }
+      firmwarePath = imageFor(firmware.path, keeping);
+      flashAddress = keeping ? 0x10000 : 0x0000;
 
       // Already downloaded and checked when the version was picked.
       const cached = checkedBytesRef.current;
@@ -1228,10 +1229,15 @@ export default function LandingHero() {
                           as <span className="font-data">{verification.upstream.asset}</span>. The
                           file came from this site, the hash came from GitHub.
                         </>
-                      ) : (
+                      ) : (firmware as Firmware).upstream ? (
                         <>
                           Matches the hash on file. The published release could not be reached, so
                           it was not cross-checked against it.
+                        </>
+                      ) : (
+                        <>
+                          Matches the hash on file. This build is not on a public release, so there
+                          is no published hash to cross-check it against.
                         </>
                       )}
                     </p>

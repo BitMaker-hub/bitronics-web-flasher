@@ -58,6 +58,12 @@ export type DeviceSource = {
   keepsConfiguration?: boolean; // ships a firmware-only image to flash at 0x10000
   /** Boards this device claims out of a shared folder */
   includes?: (board: string) => boolean;
+  /**
+   * Extra firmware folders whose boards join this device's list. A device is
+   * usually one folder, but a board we build ourselves keeps its own folder
+   * and its own version numbers while still sitting with its siblings.
+   */
+  also?: string[];
   /** How a board is spelled in the selector */
   label?: Record<string, string>;
   sort?: (a: Board, b: Board) => number;
@@ -119,8 +125,12 @@ export const DEVICE_SOURCES: DeviceSource[] = [
     shop: `${SHOP}/nerdaxe`,
     keepsConfiguration: true,
     slug: 'nerdqaxe', // shares its folder with the NerdQaxe, same repository
+    // The Gaia is ours: built from our own fork rather than published by
+    // shufps, so it sits in its own folder that the firmware cron never
+    // touches, and joins the list here.
+    also: ['nerdaxegaia'],
     includes: (board) => board.startsWith('NerdAxe'),
-    label: { NerdAxe: 'Ultra', NerdAxeGamma: 'Gamma' },
+    label: { NerdAxe: 'Ultra', NerdAxeGamma: 'Gamma', NerdAxeGaia: 'Gaia' },
   },
   {
     device: 'NerdQaxe',
