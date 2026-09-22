@@ -22,7 +22,8 @@ const VERSIONS_KEPT_BY_DEVICE = { nerdminer: 3 };
 // Versions kept on purpose, however old they get, because somebody out there
 // needs that exact one. Gamma owners hitting a particular fault have to go
 // back to v2.4.5, and the daily prune would carry it off the moment a newer
-// release landed.
+// release landed. The page explains the odd one out on its own: that version's
+// manifest carries a badge ("Downgrade") printed next to it in the list.
 const PINNED_VERSIONS = { bitaxe: ['v2.4.5'] };
 
 /**

@@ -16,6 +16,12 @@ type SelectorProps = {
   mono?: boolean;
   /** The list arrives newest first, so the first entry is the one to pick. */
   markFirstAsLatest?: boolean;
+  /**
+   * A short word for a value that needs explaining, keyed by value. Gold says
+   * "pick this one", so these are deliberately plain: an old build kept for
+   * people who have to go back to it is not a recommendation.
+   */
+  badges?: Record<string, string>;
 };
 
 export default function BoardVersionSelector({
@@ -26,6 +32,7 @@ export default function BoardVersionSelector({
   value,
   mono = false,
   markFirstAsLatest = false,
+  badges,
 }: SelectorProps) {
   return (
     <Select 
@@ -44,6 +51,11 @@ export default function BoardVersionSelector({
             {markFirstAsLatest && index === 0 && (
               <span className="ml-2 rounded bg-bitronics px-1.5 py-0.5 text-[10px] font-semibold text-[#4A4200] align-middle">
                 Latest
+              </span>
+            )}
+            {badges?.[val] && (
+              <span className="ml-2 rounded border border-white/25 px-1.5 py-0.5 text-[10px] font-semibold text-white/60 align-middle">
+                {badges[val]}
               </span>
             )}
           </SelectItem>

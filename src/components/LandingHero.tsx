@@ -126,6 +126,9 @@ export default function LandingHero() {
             version: version,
             path: `${basePath}/firmware/${source.slug}/${version}/${boardName}_factory.bin`,
             sha256: manifest.sha256?.[boardName],
+            // Set by hand on a version kept for a reason, so the list says so
+            // instead of leaving an old build looking like an oversight.
+            badge: manifest.badge,
             upstream:
               manifest.upstream && asset
                 ? { repo: manifest.upstream.repo, tag: manifest.upstream.tag, asset }
@@ -1182,6 +1185,11 @@ export default function LandingHero() {
                   disabled={isConnecting || isFlashing || selectedBoardVersion === ''}
                   mono
                   markFirstAsLatest
+                  badges={Object.fromEntries(
+                    board.supported_firmware
+                      .filter((f: any) => f.badge)
+                      .map((f: any) => [f.version, f.badge]),
+                  )}
                 />
               </div>
             </div>

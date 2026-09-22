@@ -7,6 +7,12 @@ export type Firmware = {
   /** What the file should hash to, recorded when it was fetched. */
   sha256?: string;
   upstream?: Upstream;
+  /**
+   * One word for a version that needs explaining. An old build kept on the
+   * list on purpose says why it is there instead of looking like an oversight.
+   * It comes from the version's own manifest.
+   */
+  badge?: string;
 };
 export type Board = { name: string; file: string; supported_firmware: Firmware[] };
 
