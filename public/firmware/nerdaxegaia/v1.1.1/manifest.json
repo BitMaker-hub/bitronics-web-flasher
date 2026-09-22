@@ -5,5 +5,12 @@
   ],
   "sha256": {
     "NerdAxeGaia": "68c2abdbbf319763744e47955badbc465e674f41ddecf5afc3201376b07eb5a5"
+  },
+  "upstream": {
+    "repo": "BitMaker-hub/ESP-Miner-NerdQAxePlus",
+    "tag": "gaia-v1.1.1",
+    "assets": {
+      "NerdAxeGaia": "NerdAxeGaia_factory.bin"
+    }
   }
 }
