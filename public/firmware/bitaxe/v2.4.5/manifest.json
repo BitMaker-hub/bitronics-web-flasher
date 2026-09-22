@@ -1,0 +1,16 @@
+{
+  "version": "v2.4.5",
+  "boards": [
+    "Gamma601"
+  ],
+  "sha256": {
+    "Gamma601": "fa2c69d9488bfad731e1f8c9ea27bb45cc960b4e02a76ff4b5711dd1ec56ffcb"
+  },
+  "upstream": {
+    "repo": "bitaxeorg/ESP-Miner",
+    "tag": "v2.4.5",
+    "assets": {
+      "Gamma601": "esp-miner-factory-601-v2.4.5.bin"
+    }
+  }
+}

@@ -19,6 +19,24 @@ const VERSIONS_KEPT = 4;
 // weighs as much as three of anything else. It keeps one fewer.
 const VERSIONS_KEPT_BY_DEVICE = { nerdminer: 3 };
 
+// Versions kept on purpose, however old they get, because somebody out there
+// needs that exact one. Gamma owners hitting a particular fault have to go
+// back to v2.4.5, and the daily prune would carry it off the moment a newer
+// release landed.
+const PINNED_VERSIONS = { bitaxe: ['v2.4.5'] };
+
+/**
+ * Which versions a device gets to keep: the newest few, plus anything pinned,
+ * in the order the manifest already lists them.
+ */
+function trimVersions(versions, firmwarePath) {
+  const device = path.basename(firmwarePath);
+  const limit = VERSIONS_KEPT_BY_DEVICE[device] || VERSIONS_KEPT;
+  const pinned = PINNED_VERSIONS[device] || [];
+  const recent = versions.filter((v) => !pinned.includes(v)).slice(0, limit);
+  return versions.filter((v) => recent.includes(v) || pinned.includes(v));
+}
+
 function compareVersions(a, b) {
   const parts = (v) => String(v).replace(/^v/, '').split('-')[0].split('.');
   const [left, right] = [parts(a), parts(b)];
@@ -267,7 +285,7 @@ class FirmwareUpdater {
       // Add new version if it doesn't exist
       if (!mainManifest.versions.includes(newVersion)) {
         mainManifest.versions.unshift(newVersion); // Add at beginning (newest first)
-        mainManifest.versions = mainManifest.versions.slice(0, VERSIONS_KEPT);
+        mainManifest.versions = trimVersions(mainManifest.versions, firmwarePath);
       }
       
       // Update devices list (merge and deduplicate)
@@ -353,8 +371,7 @@ class FirmwareUpdater {
       return; // a folder without a manifest is maintained by hand
     }
 
-    const limit = VERSIONS_KEPT_BY_DEVICE[path.basename(firmwarePath)] || VERSIONS_KEPT;
-    const kept = (manifest.versions || []).slice(0, limit);
+    const kept = trimVersions(manifest.versions || [], firmwarePath);
     if (kept.length === 0) return; // never empty a folder on a broken manifest
 
     if (kept.length !== (manifest.versions || []).length) {
