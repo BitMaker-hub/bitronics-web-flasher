@@ -1,0 +1,15 @@
+{
+  "version": "v1.1.0.1",
+  "boards": [
+    "NerdQAxe++",
+    "NerdQAxe+",
+    "NerdAxe",
+    "NerdAxeGamma"
+  ],
+  "sha256": {
+    "NerdQAxe++": "c084a7523df132bc3a6dd2f5dcaf0fdc989e9c210b12479aceb80376c4f47e12",
+    "NerdQAxe+": "9b5fb7ba5c783664ea750de48c8e862f02934f5b650dc5b36aadec243a0736ad",
+    "NerdAxe": "3f534f4063b0362d2df731e3e619f87045065805b0aaeaeff75181b21ef5718c",
+    "NerdAxeGamma": "030810daf5bb393a391a57a17046d3746f3e1aeceffdf1702d10b2d7a8fd1d94"
+  }
+}
