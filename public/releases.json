@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T06:57:28.341Z",
+  "generatedAt": "2026-09-27T07:26:25.994Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -9,20 +9,20 @@
       "url": "https://github.com/bitaxeorg/ESP-Miner/releases",
       "releases": [
         {
+          "tag": "checksum-test-0",
+          "name": "checksum-test-0",
+          "published": "2026-09-26T08:57:48Z",
+          "prerelease": true,
+          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/checksum-test-0",
+          "summary": ""
+        },
+        {
           "tag": "v2.15.3",
           "name": "v2.15.3",
           "published": "2026-09-20T15:57:20Z",
           "prerelease": false,
           "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.3",
           "summary": "fix(axe-os): derive low-frequency warnings from device presets by @vortexopenclaw in #1961 · @vortexopenclaw made their first contribution in #1961"
-        },
-        {
-          "tag": "v2.15.2",
-          "name": "v2.15.2",
-          "published": "2026-09-18T06:20:56Z",
-          "prerelease": true,
-          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.2",
-          "summary": "fix: prevent reconnect storms from slow clients by @r3mko in https://github.com/bitaxeorg/ESP-Miner/pull/1913 · Add BM1372/BM1373 ASIC driver support by @benjamin-wilson in https://github.com/bitaxeorg/ESP-Miner/pull/1890 · Bitaxe Color: Na"
         }
       ]
     },
