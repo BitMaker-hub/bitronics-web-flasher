@@ -973,8 +973,16 @@ export default function LandingHero() {
         }
         firmwareArrayBuffer = await firmwareResponse.arrayBuffer();
 
-        setStatus('Checking the firmware…');
-        setVerification(await verifyFirmware(firmwareArrayBuffer, firmware as Firmware));
+        // The recorded hash describes the factory image and nothing else.
+        // Keeping the configuration writes the firmware-only build beside it,
+        // which has no hash of its own, and checking those bytes against the
+        // factory's hash could only ever fail — which is exactly what it did:
+        // it refused to flash anything at all. The same guard as the check on
+        // selection, which skips rather than lies.
+        if (firmwarePath === firmware.path) {
+          setStatus('Checking the firmware…');
+          setVerification(await verifyFirmware(firmwareArrayBuffer, firmware as Firmware));
+        }
       }
 
       const firmwareUint8Array = new Uint8Array(firmwareArrayBuffer);
