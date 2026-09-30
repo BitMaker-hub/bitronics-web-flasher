@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-27T07:26:25.994Z",
+  "generatedAt": "2026-09-30T07:48:04.730Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,20 +36,20 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
+          "tag": "v1.1.1-alpha1",
+          "name": "v1.1.1-alpha1",
+          "published": "2026-09-30T04:54:33Z",
+          "prerelease": true,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha1",
+          "summary": "⚠️ **Diagnostic build**: this pre-release has panic core dumps enabled, so the dump can be downloaded via `/api/system/coredump` and the System page. A dump may contain sensitive data such as your WiFi password and pool credentials, and wit"
+        },
+        {
           "tag": "v1.1.0.1",
           "name": "v1.1.0.1",
           "published": "2026-09-24T05:36:59Z",
           "prerelease": false,
           "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.0.1",
           "summary": "fix(coinbase): match payout address by scriptPubKey bytes (fixes P2PK… by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/695 · sv2: accept mining job frames larger than 2 KB by @warioishere in https://github.com/shufps/ESP"
-        },
-        {
-          "tag": "v1.1.1-test1",
-          "name": "v1.1.1-test1",
-          "published": "2026-09-06T08:06:29Z",
-          "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-test1",
-          "summary": "testing #695"
         }
       ]
     },
