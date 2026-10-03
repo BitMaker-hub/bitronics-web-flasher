@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-02T07:49:16.060Z",
+  "generatedAt": "2026-10-03T07:24:44.326Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,19 +36,19 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
+          "tag": "v1.1.1-alpha3",
+          "name": "v1.1.1-alpha3",
+          "published": "2026-10-02T07:55:55Z",
+          "prerelease": true,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha3",
+          "summary": "⚠️ **Diagnostic build**: this pre-release has panic core dumps enabled, so the dump can be downloaded via `/api/system/coredump` and the System page. A dump may contain sensitive data such as your WiFi password and pool credentials, and wit"
+        },
+        {
           "tag": "v1.1.1-alpha2",
           "name": "v1.1.1-alpha2",
           "published": "2026-10-01T16:35:50Z",
           "prerelease": true,
           "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha2",
-          "summary": "⚠️ **Diagnostic build**: this pre-release has panic core dumps enabled, so the dump can be downloaded via `/api/system/coredump` and the System page. A dump may contain sensitive data such as your WiFi password and pool credentials, and wit"
-        },
-        {
-          "tag": "v1.1.1-alpha1",
-          "name": "v1.1.1-alpha1",
-          "published": "2026-09-30T04:54:33Z",
-          "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha1",
           "summary": "⚠️ **Diagnostic build**: this pre-release has panic core dumps enabled, so the dump can be downloaded via `/api/system/coredump` and the System page. A dump may contain sensitive data such as your WiFi password and pool credentials, and wit"
         }
       ]
