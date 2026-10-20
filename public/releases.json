@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-11T08:06:50.643Z",
+  "generatedAt": "2026-10-20T06:58:20.563Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,20 +36,20 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
+          "tag": "v1.1.1-alpha6",
+          "name": "v1.1.1-alpha6",
+          "published": "2026-10-20T04:47:00Z",
+          "prerelease": true,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha6",
+          "summary": "fix(ui): show ping stats for public-pool.io by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/729 · feat: optionally reset all-time stats from the reset dialog by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus"
+        },
+        {
           "tag": "v1.1.1-alpha5",
           "name": "v1.1.1-alpha5",
           "published": "2026-10-07T04:50:57Z",
           "prerelease": true,
           "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha5",
           "summary": "updated to esp-idf 5.3.6 by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/720 · Add Bitronics pool stats quick link by @twofaktor in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/723 · Nerd Eth interposer support "
-        },
-        {
-          "tag": "v1.1.1-alpha4",
-          "name": "v1.1.1-alpha4",
-          "published": "2026-10-05T06:31:52Z",
-          "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha4",
-          "summary": "NerdAxeGaia board (BM1373) with Gaia theme by @BitMaker-hub in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/718"
         }
       ]
     },
