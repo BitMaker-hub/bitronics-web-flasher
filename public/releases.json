@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T06:58:20.563Z",
+  "generatedAt": "2026-10-21T06:52:05.847Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,12 +36,12 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
-          "tag": "v1.1.1-alpha6",
-          "name": "v1.1.1-alpha6",
-          "published": "2026-10-20T04:47:00Z",
+          "tag": "v1.1.1-beta1",
+          "name": "v1.1.1-beta1",
+          "published": "2026-10-21T06:27:27Z",
           "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha6",
-          "summary": "fix(ui): show ping stats for public-pool.io by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/729 · feat: optionally reset all-time stats from the reset dialog by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus"
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-beta1",
+          "summary": "Changes since v1.1.0.1 · Feat asic error rate by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/714 · Add BTC PoW Lab pool quicklink by @monzncarlos-droid in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/713"
         },
         {
           "tag": "v1.1.1-alpha5",
