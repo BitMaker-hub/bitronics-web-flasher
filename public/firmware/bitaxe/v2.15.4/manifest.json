@@ -1,0 +1,11 @@
+{
+  "version": "v2.15.4",
+  "boards": [
+    "Supra401",
+    "Gamma601"
+  ],
+  "sha256": {
+    "Supra401": "b5e123805128c98bf24bda84de77848092ff65ddd003708f99a6b6e5e99ee633",
+    "Gamma601": "d6307ce762d3fad529b705ad9c3b8fae96b66bd35125585b006f132c9de10184"
+  }
+}

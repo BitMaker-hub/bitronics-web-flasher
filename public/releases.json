@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T06:52:05.847Z",
+  "generatedAt": "2026-10-22T06:56:16.732Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -9,12 +9,12 @@
       "url": "https://github.com/bitaxeorg/ESP-Miner/releases",
       "releases": [
         {
-          "tag": "checksum-test-0",
-          "name": "checksum-test-0",
-          "published": "2026-09-26T08:57:48Z",
-          "prerelease": true,
-          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/checksum-test-0",
-          "summary": ""
+          "tag": "v2.15.4",
+          "name": "v2.15.4",
+          "published": "2026-10-21T10:27:57Z",
+          "prerelease": false,
+          "url": "https://github.com/bitaxeorg/ESP-Miner/releases/tag/v2.15.4",
+          "summary": "fix: replace embedded CA trust store after eMudhra compromise by @skot in https://github.com/bitaxeorg/ESP-Miner/pull/2040"
         },
         {
           "tag": "v2.15.3",
