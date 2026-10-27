@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-22T06:56:16.732Z",
+  "generatedAt": "2026-10-27T07:09:28.553Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,20 +36,20 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
-          "tag": "v1.1.1-beta1",
-          "name": "v1.1.1-beta1",
-          "published": "2026-10-21T06:27:27Z",
+          "tag": "v1.1.1-rc1",
+          "name": "v1.1.1-rc1",
+          "published": "2026-10-26T15:47:10Z",
           "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-beta1",
-          "summary": "Changes since v1.1.0.1 · Feat asic error rate by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/714 · Add BTC PoW Lab pool quicklink by @monzncarlos-droid in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/713"
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-rc1",
+          "summary": "Fix: Replace embedded CA bundle after eMudhra compromise by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/742"
         },
         {
-          "tag": "v1.1.1-alpha5",
-          "name": "v1.1.1-alpha5",
-          "published": "2026-10-07T04:50:57Z",
+          "tag": "v1.0.37.4-LTS-rc2",
+          "name": "v1.0.37.4-LTS-rc2",
+          "published": "2026-10-26T15:49:18Z",
           "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-alpha5",
-          "summary": "updated to esp-idf 5.3.6 by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/720 · Add Bitronics pool stats quick link by @twofaktor in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/723 · Nerd Eth interposer support "
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.0.37.4-LTS-rc2",
+          "summary": "Lts backports by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/733 · Fix for LTS: Replace embedded CA bundle after eMudhra compromise by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/743 · <!--"
         }
       ]
     },
