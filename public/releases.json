@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-27T07:09:28.553Z",
+  "generatedAt": "2026-11-01T08:31:37.095Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,20 +36,20 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
-          "tag": "v1.1.1-rc1",
-          "name": "v1.1.1-rc1",
-          "published": "2026-10-26T15:47:10Z",
-          "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1-rc1",
-          "summary": "Fix: Replace embedded CA bundle after eMudhra compromise by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/742"
+          "tag": "v1.1.1",
+          "name": "v1.1.1",
+          "published": "2026-10-31T09:59:17Z",
+          "prerelease": false,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1",
+          "summary": "V1.1.1 · New board: NerdAxeGaia · The **NerdAxeGaia** is a new single-ASIC board built around Bitmain's **BM1373**, powered by a TPS546D24A from 12 V, with a LilyGO T-Display-S3. It comes with its own display theme and a new gold **Gaia** w"
         },
         {
-          "tag": "v1.0.37.4-LTS-rc2",
-          "name": "v1.0.37.4-LTS-rc2",
-          "published": "2026-10-26T15:49:18Z",
-          "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.0.37.4-LTS-rc2",
-          "summary": "Lts backports by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/733 · Fix for LTS: Replace embedded CA bundle after eMudhra compromise by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/743 · <!--"
+          "tag": "v1.0.37.4-LTS",
+          "name": "v1.0.37.4-LTS",
+          "published": "2026-10-31T09:58:17Z",
+          "prerelease": false,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.0.37.4-LTS",
+          "summary": "Lts backports by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/733 · Fix for LTS: Replace embedded CA bundle after eMudhra compromise by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/743 · ci: use "
         }
       ]
     },

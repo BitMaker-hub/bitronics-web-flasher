@@ -1,0 +1,9 @@
+{
+  "version": "v1.1.1",
+  "boards": [
+    "NerdOctaxeGamma"
+  ],
+  "sha256": {
+    "NerdOctaxeGamma": "629ded1251cf9e0478110dad51094593c0804604af94d1dfcd18c30998f1512a"
+  }
+}
