@@ -10,6 +10,7 @@ const FIRMWARE_LINKS = [
   { label: 'NerdQaxe & Octaxe', href: 'https://github.com/shufps/ESP-Miner-NerdQAxePlus' },
   { label: 'NerdMiner', href: 'https://github.com/BitMaker-hub/NerdMiner_v2' },
   { label: 'Seeder', href: 'https://github.com/BitMaker-hub/Seeder' },
+  { label: 'Open Source Badge', href: 'https://github.com/BitMaker-hub/OpenSourceBadge' },
 ];
 
 const SITE_LINKS = [

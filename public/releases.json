@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01T08:31:37.095Z",
+  "generatedAt": "2026-11-03T09:18:31.350Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -100,6 +100,23 @@
           "prerelease": false,
           "url": "https://github.com/BitMaker-hub/Seeder/releases/tag/v2.1.3",
           "summary": ""
+        }
+      ]
+    },
+    {
+      "repo": "BitMaker-hub/OpenSourceBadge",
+      "devices": [
+        "Open Source Badge"
+      ],
+      "url": "https://github.com/BitMaker-hub/OpenSourceBadge/releases",
+      "releases": [
+        {
+          "tag": "v1.0.0",
+          "name": "Open Source Badge v1.0.0",
+          "published": "2026-11-03T09:17:28Z",
+          "prerelease": false,
+          "url": "https://github.com/BitMaker-hub/OpenSourceBadge/releases/tag/v1.0.0",
+          "summary": "First public release of the Open Source Badge firmware, the badge of Bitcoin Amsterdam 2026. · Proof of Peer handshake over ESP-NOW: contact cards with X, Telegram, npub, Lightning address and PGP · Nearby badges and invites"
         }
       ]
     }

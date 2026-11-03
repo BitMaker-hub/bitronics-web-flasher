@@ -1,0 +1,11 @@
+{
+  "name": "Open Source Badge",
+  "repository": "BitMaker-hub/OpenSourceBadge",
+  "versions": [
+    "v1.0.0"
+  ],
+  "devices": [
+    "OpenSourceBadge"
+  ],
+  "lastUpdated": "2026-11-03T09:18:28.770Z"
+}

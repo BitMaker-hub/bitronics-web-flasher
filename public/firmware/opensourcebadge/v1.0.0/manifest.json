@@ -1,0 +1,16 @@
+{
+  "version": "v1.0.0",
+  "boards": [
+    "OpenSourceBadge"
+  ],
+  "sha256": {
+    "OpenSourceBadge": "75b5e7664a210ba42a80289dc4bff5e1265b3d649b396f3314f06fe4eba39bcd"
+  },
+  "upstream": {
+    "repo": "BitMaker-hub/OpenSourceBadge",
+    "tag": "v1.0.0",
+    "assets": {
+      "OpenSourceBadge": "opensourcebadge-factory.bin"
+    }
+  }
+}

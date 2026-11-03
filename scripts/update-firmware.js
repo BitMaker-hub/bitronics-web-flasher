@@ -153,6 +153,21 @@ const FIRMWARE_REPOS = {
       }
     ]
   },
+  opensourcebadge: {
+    owner: 'BitMaker-hub',
+    repo: 'OpenSourceBadge',
+    firmwarePath: 'public/firmware/opensourcebadge',
+    // Ours, built by its own CI like the Seeder, so the page can say "Verified".
+    crossCheck: true,
+    devices: [
+      {
+        name: 'OpenSourceBadge',
+        factoryPattern: 'opensourcebadge-factory.bin',
+        firmwarePattern: 'opensourcebadge-firmware.bin',
+        fileName: 'OpenSourceBadge'
+      }
+    ]
+  },
   nerdminer: {
     owner: 'BitMaker-hub',
     repo: 'NerdMiner_v2',
@@ -180,6 +195,7 @@ const FOLLOWED_PROJECTS = [
   },
   { owner: 'BitMaker-hub', repo: 'NerdMiner_v2', devices: ['NerdMiner'] },
   { owner: 'BitMaker-hub', repo: 'Seeder', devices: ['Seeder'] },
+  { owner: 'BitMaker-hub', repo: 'OpenSourceBadge', devices: ['Open Source Badge'] },
 ];
 
 class FirmwareUpdater {
@@ -279,6 +295,8 @@ class FirmwareUpdater {
 
         if (firmwarePath.includes('seeder')) {
           seriesName = 'Seeder Series';
+        } else if (firmwarePath.includes('opensourcebadge')) {
+          seriesName = 'Open Source Badge';
         } else if (firmwarePath.includes('nerdminer')) {
           seriesName = 'Nerdminer Series';
         } else if (firmwarePath.includes('nerdoctaxe')) {

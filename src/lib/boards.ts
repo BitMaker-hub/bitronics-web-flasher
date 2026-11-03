@@ -37,6 +37,8 @@ const CHIP_OVERRIDES: Record<string, Chip> = {
   'nerdqaxe+': 'ESP32-S3',
   'nerdqaxe++': 'ESP32-S3',
   nerdoctaxegamma: 'ESP32-S3',
+  // The Bitcoin Amsterdam badge is a HAT on a LilyGO T-Display-S3.
+  opensourcebadge: 'ESP32-S3',
 };
 
 const words = (board: string) => board.toLowerCase().split(/[-_\s.]+/);

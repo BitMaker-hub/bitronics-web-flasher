@@ -34,6 +34,11 @@
       "name": "Seeder",
       "picture": "pictures/seeder.png",
       "boards": []
+    },
+    {
+      "name": "Open Source Badge",
+      "picture": "pictures/opensourcebadge.png",
+      "boards": []
     }
   ]
 }

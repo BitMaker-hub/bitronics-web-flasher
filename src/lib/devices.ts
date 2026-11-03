@@ -193,6 +193,15 @@ export const DEVICE_SOURCES: DeviceSource[] = [
     slug: 'seeder',
     label: { TDisplay: 'TTGO T-Display', TDisplayS3: 'LilyGO T-Display-S3' },
   },
+  {
+    device: 'Open Source Badge',
+    category: 'tools',
+    tagline: 'Bitcoin Amsterdam 2026',
+    // Keeping the configuration keeps the profile, the wallet and the peers met.
+    keepsConfiguration: true,
+    slug: 'opensourcebadge',
+    label: { OpenSourceBadge: 'LilyGO T-Display-S3' },
+  },
 ];
 
 export const sourceFor = (device: string) => DEVICE_SOURCES.find((s) => s.device === device);
