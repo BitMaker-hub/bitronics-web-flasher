@@ -125,10 +125,8 @@ export const DEVICE_SOURCES: DeviceSource[] = [
     shop: `${SHOP}/nerdaxe`,
     keepsConfiguration: true,
     slug: 'nerdqaxe', // shares its folder with the NerdQaxe, same repository
-    // The Gaia is ours: built from our own fork rather than published by
-    // shufps, so it sits in its own folder that the firmware cron never
-    // touches, and joins the list here.
-    also: ['nerdaxegaia'],
+    // The Gaia used to come from a folder of our own, because upstream had no
+    // build for it yet. It does from v1.1.1 on, so it arrives with the rest.
     includes: (board) => board.startsWith('NerdAxe'),
     label: { NerdAxe: 'Ultra', NerdAxeGamma: 'Gamma', NerdAxeGaia: 'Gaia' },
   },

@@ -56,11 +56,16 @@ const FIRMWARE_REPOS = {
     owner: 'shufps',
     repo: 'ESP-Miner-NerdQAxePlus',
     firmwarePath: 'public/firmware/nerdqaxe',
+    crossCheck: true,
+    // Patterns end at the version separator on purpose. An asset is matched by
+    // `includes`, so a bare "esp-miner-factory-NerdAxe" also matches the Gaia
+    // and the Gamma, and which one wins depends on the order GitHub happens to
+    // list them in. It was alphabetical luck that it ever picked the right one.
     devices: [
       {
         name: 'NerdQAxe++',
-        factoryPattern: 'esp-miner-factory-NerdQAxe++',
-        firmwarePattern: 'esp-miner-NerdQAxe++',
+        factoryPattern: 'esp-miner-factory-NerdQAxe++-v',
+        firmwarePattern: 'esp-miner-NerdQAxe++.bin',
         fileName: 'NerdQAxe++'
       },
       {
@@ -71,15 +76,24 @@ const FIRMWARE_REPOS = {
       },
       {
         name: 'NerdAxe',
-        factoryPattern: 'esp-miner-factory-NerdAxe',
-        firmwarePattern: 'esp-miner-NerdAxe',
+        factoryPattern: 'esp-miner-factory-NerdAxe-v',
+        firmwarePattern: 'esp-miner-NerdAxe.bin',
         fileName: 'NerdAxe'
       },
       {
         name: 'NerdAxeGamma',
-        factoryPattern: 'esp-miner-factory-NerdAxeGamma',
-        firmwarePattern: 'esp-miner-NerdAxeGamma',
+        factoryPattern: 'esp-miner-factory-NerdAxeGamma-v',
+        firmwarePattern: 'esp-miner-NerdAxeGamma.bin',
         fileName: 'NerdAxeGamma'
+      },
+      {
+        // Upstream builds the Gaia itself from v1.1.1 on, so it comes from
+        // here now instead of the hand-filled folder we were serving while it
+        // waited to land there.
+        name: 'NerdAxeGaia',
+        factoryPattern: 'esp-miner-factory-NerdAxeGaia-v',
+        firmwarePattern: 'esp-miner-NerdAxeGaia.bin',
+        fileName: 'NerdAxeGaia'
       }
     ]
   },
@@ -106,11 +120,12 @@ const FIRMWARE_REPOS = {
     owner: 'shufps',
     repo: 'ESP-Miner-NerdQAxePlus',
     firmwarePath: 'public/firmware/nerdoctaxe',
+    crossCheck: true,
     devices: [
       {
         name: 'NerdOctaxeGamma',
-        factoryPattern: 'esp-miner-factory-NerdOCTAXE-Gamma',
-        firmwarePattern: 'esp-miner-NerdOCTAXE-Gamma',
+        factoryPattern: 'esp-miner-factory-NerdOCTAXE-Gamma-v',
+        firmwarePattern: 'esp-miner-NerdOCTAXE-Gamma.bin',
         fileName: 'NerdOctaxeGamma'
       }
     ]
