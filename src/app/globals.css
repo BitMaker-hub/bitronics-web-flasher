@@ -105,6 +105,10 @@
   --color-chrome-light: #26262A;
   --color-hairline: #2A2A2E;
   --color-muted-ink: #8A8A8F;
+  /* Outcomes: a check that passed, a step that failed. The green is the
+     Seeder's own. */
+  --color-success: #5CD68A;
+  --color-danger: #F0645A;
   /* The light half of the palette. The pool alternates dark, gold and light
      bands rather than running black end to end, and so does this. */
   --color-ink: #1D1D1F;            /* text on a light surface */

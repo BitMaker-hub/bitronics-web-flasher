@@ -72,6 +72,11 @@ export type DeviceSource = {
    * more boards than anyone can scan, and pointless where it has two.
    */
   detectChip?: boolean;
+  /**
+   * Its running firmware takes the WiFi over the serial port, so the network
+   * can be set on a unit that is already flashed, without flashing it again.
+   */
+  setsWifiOverSerial?: boolean;
 };
 
 export const CATEGORIES: { id: DeviceCategory; title: string; blurb: string }[] = [
@@ -199,6 +204,7 @@ export const DEVICE_SOURCES: DeviceSource[] = [
     tagline: 'Bitcoin Amsterdam 2026',
     // Keeping the configuration keeps the profile, the wallet and the peers met.
     keepsConfiguration: true,
+    setsWifiOverSerial: true,
     slug: 'opensourcebadge',
     label: { OpenSourceBadge: 'LilyGO T-Display-S3' },
   },
