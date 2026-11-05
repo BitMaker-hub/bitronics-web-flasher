@@ -17,7 +17,13 @@ type Props = {
   disabled?: boolean;
 };
 
-type Saved = { number: string; firmware: string | null; network: string; withPassword: boolean };
+type Saved = {
+  number: string;
+  firmware: string | null;
+  network: string;
+  withPassword: boolean;
+  wallet: string | null;
+};
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -26,6 +32,8 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 // 1.0.0 print no firmware, so that part is optional.
 const HEADER = /Badge #(\d+)[^\r\n]*?(?:, firmware v(\S+) \(([^)]*)\))?\r?\n/;
 const WIFI = /WiFi:\s+([^\r\n]*?)\r?\n/;
+// A few lines below: "  LNbits: escuchando, badge042@domain, saldo 0 sats".
+const WALLET = /LNbits: [^,\r\n]*, ([^,\r\n]*), saldo/;
 
 // The badge trims both fields and splits the line at the first bar, so
 // anything that would not survive that is refused here instead.
@@ -143,11 +151,17 @@ export default function BadgeWifi({ port: openPort, disabled }: Props) {
           password ? 'The badge kept the network but not its password.' : 'The badge still holds an old password.',
         );
 
+      // The wallet comes further down the same answer. It is shown so that
+      // whoever sets the WiFi can see the wallet is still there.
+      let wallet: RegExpMatchArray | null = null;
+      for (let i = 0; i < 10 && !(wallet = text.match(WALLET)); i++) await sleep(100);
+
       setSaved({
         number: answer[1],
         firmware: answer[2] ? `v${answer[2]} (${answer[3]})` : null,
         network: name,
         withPassword,
+        wallet: wallet?.[1].trim() || null,
       });
     } catch (e) {
       // Closing the port picker is a change of mind, not a failure.
@@ -250,7 +264,15 @@ export default function BadgeWifi({ port: openPort, disabled }: Props) {
                 , running firmware <span className="font-data">{saved.firmware}</span>
               </>
             )}
-            . Plug in the next badge and press again: the fields stay filled.
+            .{' '}
+            {saved.wallet ? (
+              <>
+                Its wallet, <span className="font-data">{saved.wallet}</span>, is still there.
+              </>
+            ) : (
+              'It has no wallet yet.'
+            )}{' '}
+            Plug in the next badge and press again: the fields stay filled.
           </p>
         </div>
       )}
