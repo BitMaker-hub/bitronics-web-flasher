@@ -29,8 +29,10 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // The answer to `i` opens with "Badge #042 Name, firmware v1.0.0 (0d61bf7)" and
 // further down says "  WiFi:  Network (con contraseña)". Builds older than
-// 1.0.0 print no firmware, so that part is optional.
-const HEADER = /Badge #(\d+)[^\r\n]*?(?:, firmware v(\S+) \(([^)]*)\))?\r?\n/;
+// 1.0.0 print no firmware, so that part is optional. It has to start a line:
+// while booting the badge prints "[badge] #417 Badge #417, 0 peers", which
+// would otherwise pass for the answer.
+const HEADER = /(?:^|\n)Badge #(\d+)[^\r\n]*?(?:, firmware v(\S+) \(([^)]*)\))?\r?\n/;
 const WIFI = /WiFi:\s+([^\r\n]*?)\r?\n/;
 // A few lines below: "  LNbits: escuchando, badge042@domain, saldo 0 sats".
 const WALLET = /LNbits: [^,\r\n]*, ([^,\r\n]*), saldo/;
