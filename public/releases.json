@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-03T09:18:31.350Z",
+  "generatedAt": "2026-11-08T08:25:49.489Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,20 +36,20 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
-          "tag": "v1.1.1",
-          "name": "v1.1.1",
-          "published": "2026-10-31T09:59:17Z",
-          "prerelease": false,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.1",
-          "summary": "V1.1.1 · New board: NerdAxeGaia · The **NerdAxeGaia** is a new single-ASIC board built around Bitmain's **BM1373**, powered by a TPS546D24A from 12 V, with a LilyGO T-Display-S3. It comes with its own display theme and a new gold **Gaia** w"
+          "tag": "v1.1.2-alpha.1",
+          "name": "v1.1.2-alpha.1",
+          "published": "2026-11-07T14:46:59Z",
+          "prerelease": true,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.2-alpha.1",
+          "summary": "fix(display): resolve OCEAN pool favicon from ocean.xyz by @twofaktor in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/752 · Fix (Swarm): Validate miner discovery responses by @VortexRadar in https://github.com/shufps/ESP-Miner-Nerd"
         },
         {
-          "tag": "v1.0.37.4-LTS",
-          "name": "v1.0.37.4-LTS",
-          "published": "2026-10-31T09:58:17Z",
-          "prerelease": false,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.0.37.4-LTS",
-          "summary": "Lts backports by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/733 · Fix for LTS: Replace embedded CA bundle after eMudhra compromise by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/743 · ci: use "
+          "tag": "v1.0.37.5-LTS-rc.1",
+          "name": "v1.0.37.5-LTS-rc1",
+          "published": "2026-11-07T14:48:16Z",
+          "prerelease": true,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.0.37.5-LTS-rc.1",
+          "summary": "Fix (Swarm, LTS): Validate miner discovery responses by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/748 · fix(tls): accept cross-signed roots from the pinned CA bundle (LTS) by @shufps in https://github.com/shufps/"
         }
       ]
     },
