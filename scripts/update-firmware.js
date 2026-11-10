@@ -17,7 +17,13 @@ const VERSIONS_KEPT = 4;
 
 // The NerdMiner ships 32 boards in every release, so a single version of it
 // weighs as much as three of anything else. It keeps one fewer.
-const VERSIONS_KEPT_BY_DEVICE = { nerdminer: 3 };
+//
+// The two shufps folders joined it on 10 November. A version of nerdqaxe went
+// from 74 MB to 92 MB when the Gaia started shipping in it, and the pair now
+// costs about 111 MB per upstream release — enough that the published site
+// stopped syncing inside the deploy timeout. Three versions each buys back
+// 93 MB. Nobody has ever asked for the fourth one down.
+const VERSIONS_KEPT_BY_DEVICE = { nerdminer: 3, nerdqaxe: 3, nerdoctaxe: 3 };
 
 // Versions kept on purpose, however old they get, because somebody out there
 // needs that exact one. Gamma owners hitting a particular fault have to go
@@ -621,7 +627,7 @@ class FirmwareUpdater {
 
     // Prune every device, including the ones nobody automates, so a folder
     // filled in by hand cannot push the site back over the limit.
-    console.log(`\n🧹 Keeping the last ${VERSIONS_KEPT} versions of each device...`);
+    console.log(`\n🧹 Trimming each device to its own version limit...`);
     const root = 'public/firmware';
     for (const entry of await fs.readdir(root, { withFileTypes: true })) {
       if (entry.isDirectory()) await this.pruneOldVersions(path.join(root, entry.name));

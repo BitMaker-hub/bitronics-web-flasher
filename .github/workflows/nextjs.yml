@@ -105,3 +105,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Pages syncs the unpacked site file by file, and this one is most of
+          # a gigabyte of firmware images. On 10 November it sat in
+          # syncing_files past the action's ten-minute default twice in a row
+          # and cancelled its own deployment, leaving the site a release
+          # behind. The upload is fine; it is the sync that needs the room.
+          timeout: 1800000
