@@ -98,17 +98,29 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.again.outputs.page_url || steps.last.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
     steps:
+      # Pages stalls in syncing_files often enough to matter: on 10 November
+      # half the deployments sat there until the action gave up and cancelled
+      # them, while the other half went through in a minute or two with the
+      # same artifact. The ten minutes is a hard maximum inside the action —
+      # pass anything larger and it is clamped back with a warning — so the
+      # only lever left is to ask again. Each attempt that fails costs ten
+      # minutes and nothing else; the site keeps serving what it already has.
       - name: Deploy to GitHub Pages
         id: deployment
-        # Do not try to raise the timeout here. Ten minutes is a hard maximum
-        # in the action: anything larger is clamped back to 600000 with a
-        # warning, so the setting does nothing but add noise to the log. When
-        # Pages sits in syncing_files until it aborts, as it did all through
-        # 10 November, the fix is to run it again: the fourth attempt went
-        # through in four minutes with an artifact smaller than the one that
-        # had deployed fine the day before in eighty seconds.
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Deploy again, Pages stalled
+        id: again
+        if: steps.deployment.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Deploy a third time
+        id: last
+        if: steps.deployment.outcome == 'failure' && steps.again.outcome == 'failure'
         uses: actions/deploy-pages@v4
