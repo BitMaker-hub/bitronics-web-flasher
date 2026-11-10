@@ -104,11 +104,11 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
+        # Do not try to raise the timeout here. Ten minutes is a hard maximum
+        # in the action: anything larger is clamped back to 600000 with a
+        # warning, so the setting does nothing but add noise to the log. When
+        # Pages sits in syncing_files until it aborts, as it did all through
+        # 10 November, the fix is to run it again: the fourth attempt went
+        # through in four minutes with an artifact smaller than the one that
+        # had deployed fine the day before in eighty seconds.
         uses: actions/deploy-pages@v4
-        with:
-          # Pages syncs the unpacked site file by file, and this one is most of
-          # a gigabyte of firmware images. On 10 November it sat in
-          # syncing_files past the action's ten-minute default twice in a row
-          # and cancelled its own deployment, leaving the site a release
-          # behind. The upload is fine; it is the sync that needs the room.
-          timeout: 1800000
