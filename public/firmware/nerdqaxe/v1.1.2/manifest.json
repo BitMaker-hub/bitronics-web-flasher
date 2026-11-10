@@ -1,0 +1,28 @@
+{
+  "version": "v1.1.2",
+  "boards": [
+    "NerdQAxe++",
+    "NerdQAxe+",
+    "NerdAxe",
+    "NerdAxeGamma",
+    "NerdAxeGaia"
+  ],
+  "sha256": {
+    "NerdQAxe++": "3f0cdfae8b6830fb43dc4e7314efea8de903b42a9914a593d603329459148b54",
+    "NerdQAxe+": "d6d3205812529455f22dca035726369285994841061d358d66c8a167f850fdbc",
+    "NerdAxe": "38973b2a5683a6c02f8dc55c196dae8e4ede351f9bb54154125e752d99f596aa",
+    "NerdAxeGamma": "ad3871028a4b4a078ebba600feb5554e660aa191e6048cb6e722a682fda69362",
+    "NerdAxeGaia": "7297e4155ce84d56e7370822e08dcea1b9fac21934f692a63d18e258e93c79d1"
+  },
+  "upstream": {
+    "repo": "shufps/ESP-Miner-NerdQAxePlus",
+    "tag": "v1.1.2",
+    "assets": {
+      "NerdQAxe++": "esp-miner-factory-NerdQAxe++-v1.1.2.bin",
+      "NerdQAxe+": "esp-miner-factory-NerdQAxe+-v1.1.2.bin",
+      "NerdAxe": "esp-miner-factory-NerdAxe-v1.1.2.bin",
+      "NerdAxeGamma": "esp-miner-factory-NerdAxeGamma-v1.1.2.bin",
+      "NerdAxeGaia": "esp-miner-factory-NerdAxeGaia-v1.1.2.bin"
+    }
+  }
+}

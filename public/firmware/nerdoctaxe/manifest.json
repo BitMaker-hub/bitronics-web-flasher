@@ -2,13 +2,13 @@
   "name": "NerdOctaxe Series",
   "repository": "shufps/ESP-Miner-NerdQAxePlus",
   "versions": [
+    "v1.1.2",
     "v1.1.1",
     "v1.1.0.1",
-    "v1.1.0",
-    "v1.0.37"
+    "v1.1.0"
   ],
   "devices": [
     "NerdOctaxeGamma"
   ],
-  "lastUpdated": "2026-11-03T08:57:12.658Z"
+  "lastUpdated": "2026-11-10T09:02:05.774Z"
 }

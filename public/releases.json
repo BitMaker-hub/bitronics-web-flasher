@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T08:25:49.489Z",
+  "generatedAt": "2026-11-10T09:02:07.849Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,20 +36,20 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
+          "tag": "v1.1.2",
+          "name": "v1.1.2",
+          "published": "2026-11-09T18:24:26Z",
+          "prerelease": false,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.2",
+          "summary": "Why you should update · v1.1.1 (and v1.0.37.4-LTS) replaced the firmware's built-in certificate store after the eMudhra CA compromise. That update was important, but it had an unwanted side effect: TLS connections to servers using **Google "
+        },
+        {
           "tag": "v1.1.2-alpha.1",
           "name": "v1.1.2-alpha.1",
           "published": "2026-11-07T14:46:59Z",
           "prerelease": true,
           "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.2-alpha.1",
           "summary": "fix(display): resolve OCEAN pool favicon from ocean.xyz by @twofaktor in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/752 · Fix (Swarm): Validate miner discovery responses by @VortexRadar in https://github.com/shufps/ESP-Miner-Nerd"
-        },
-        {
-          "tag": "v1.0.37.5-LTS-rc.1",
-          "name": "v1.0.37.5-LTS-rc1",
-          "published": "2026-11-07T14:48:16Z",
-          "prerelease": true,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.0.37.5-LTS-rc.1",
-          "summary": "Fix (Swarm, LTS): Validate miner discovery responses by @VortexRadar in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/748 · fix(tls): accept cross-signed roots from the pinned CA bundle (LTS) by @shufps in https://github.com/shufps/"
         }
       ]
     },
