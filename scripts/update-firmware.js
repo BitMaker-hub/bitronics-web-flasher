@@ -209,11 +209,33 @@ class FirmwareUpdater {
     this.hasChanges = false;
   }
 
+  /**
+   * Headers for api.github.com.
+   *
+   * Unauthenticated, GitHub allows sixty calls an hour per address — and on an
+   * Actions runner that address is shared with everyone else running a job on
+   * the same machine. On 17 November the quota was gone by the fourth
+   * repository: the badge and the NerdMiner were never checked, and the whole
+   * changelog feed came back 403. Nothing failed loudly, the run just did less
+   * than it said. With the workflow's own token it is five thousand an hour.
+   *
+   * Asset downloads are left alone: they do not go through the API, and an
+   * Authorization header follows the redirect to storage where it is not
+   * welcome.
+   */
+  apiHeaders() {
+    const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+    return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  }
+
   async getLatestRelease(owner, repo) {
     try {
       console.log(`🔍 Checking latest release for ${owner}/${repo}...`);
-      
-      const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
+
+      const response = await axios.get(
+        `https://api.github.com/repos/${owner}/${repo}/releases/latest`,
+        this.apiHeaders(),
+      );
       const release = response.data;
       
       console.log(`📦 Latest release: ${release.tag_name} (${release.name})`);
@@ -569,7 +591,8 @@ class FirmwareUpdater {
     for (const project of FOLLOWED_PROJECTS) {
       try {
         const { data } = await axios.get(
-          `https://api.github.com/repos/${project.owner}/${project.repo}/releases?per_page=5`
+          `https://api.github.com/repos/${project.owner}/${project.repo}/releases?per_page=5`,
+          this.apiHeaders(),
         );
 
         const releases = data

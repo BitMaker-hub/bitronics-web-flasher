@@ -28,6 +28,10 @@ jobs:
 
     - name: Check for new firmware releases
       id: check-releases
+      env:
+        # Without this the script talks to api.github.com anonymously, which on
+        # a shared runner means sixty calls an hour between everyone on the box.
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         node scripts/update-firmware.js > /tmp/update-output.log
         cat /tmp/update-output.log
