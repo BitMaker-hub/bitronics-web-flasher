@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T15:30:28.245Z",
+  "generatedAt": "2026-11-25T10:45:24.033Z",
   "projects": [
     {
       "repo": "bitaxeorg/ESP-Miner",
@@ -36,20 +36,20 @@
       "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases",
       "releases": [
         {
+          "tag": "v1.1.3-rc.1",
+          "name": "v1.1.3-rc.1",
+          "published": "2026-11-25T04:19:19Z",
+          "prerelease": true,
+          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.3-rc.1",
+          "summary": "docs: add nerd-os-rs banner, clean up the readme by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/774 · fix: ping task lock order, pool host UAF, OTP session rate limit, WiFi scan timeout, log websocket fd race by @shufps"
+        },
+        {
           "tag": "v1.1.3-alpha.1",
           "name": "v1.1.3-alpha.1",
           "published": "2026-11-17T06:20:07Z",
           "prerelease": true,
           "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.3-alpha.1",
           "summary": "fix(gaia): scale the VR temperature gauge to the VR shutdown temperature by @shufps in https://github.com/shufps/ESP-Miner-NerdQAxePlus/pull/766 · Gaia-Dark as native Nebular theme by @matlen67 in https://github.com/shufps/ESP-Miner-NerdQAx"
-        },
-        {
-          "tag": "v1.1.2",
-          "name": "v1.1.2",
-          "published": "2026-11-09T18:24:26Z",
-          "prerelease": false,
-          "url": "https://github.com/shufps/ESP-Miner-NerdQAxePlus/releases/tag/v1.1.2",
-          "summary": "Why you should update · v1.1.1 (and v1.0.37.4-LTS) replaced the firmware's built-in certificate store after the eMudhra CA compromise. That update was important, but it had an unwanted side effect: TLS connections to servers using **Google "
         }
       ]
     },
